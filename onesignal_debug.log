@@ -1,0 +1,51 @@
+[2026-03-20 10:49:41] SAVE SUCCESS: PID=c3b065ab-d173-48b8-a492-c15c89c4a18b, UID=GUEST
+[2026-03-20 10:51:57] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:53:32] OneSignal Send:
+IDs: b48a0e6f-e4c8-4411-b856-24ccfa4cd827
+HTTP Code: 400
+Response: {"errors":["Data must be a valid JSON object and cannot be a string, a number, true, or '\n    false. See bit.ly/2iBky3H for an example of a JSON object. '\n    You can use jsonlint.com as a JSON validator."]}
+[2026-03-20 10:53:34] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:53:46] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:53:52] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:54:09] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:54:15] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 10:58:59] OneSignal Send:
+Payload: {"app_id":"ac75a76a-da38-4991-af53-39c29ef14272","include_subscription_ids":["b48a0e6f-e4c8-4411-b856-24ccfa4cd827","c3b065ab-d173-48b8-a492-c15c89c4a18b"],"headings":{"en":"New Match Scheduled: 28 Mar, 2026 \ud83d\udcc5\ud83c\udfcf"},"contents":{"en":"\ud83c\udfcf Mumbai Indians vs Chennai Super Kings\n\ud83c\udfdf\ufe0f Venue: Eden Gardens, Kolkata\n\ud83c\udfc6 Type: League | \ud83e\udd4e Overs: 10\n\n\ud83d\udc65 Captains:\n\ud83d\udc64 Mumbai Indians: Rohit Sharma (C)\n\ud83d\udc64 Chennai Super Kings: M S Dhoni (C)\n\nBe ready on time! \ud83c\udfcf\ud83d\udd25"},"data":{"match_id":"28","type":"match_announced"},"url":"https:\/\/cptleague.free.nf\/CPT_LEAGUE\/view\/view_match.php?id=28"}
+HTTP Code: 200
+Response: {"id":"14885378-5cd7-403c-b3d6-ed9ca2790844","external_id":null}
+[2026-03-20 11:04:03] SAVE SUCCESS: PID=48ee1a2d-5063-413b-b604-d4d14f04a85f, UID=GUEST
+[2026-03-20 11:07:06] OneSignal Send:
+Payload: {"app_id":"ac75a76a-da38-4991-af53-39c29ef14272","include_subscription_ids":["b48a0e6f-e4c8-4411-b856-24ccfa4cd827","c3b065ab-d173-48b8-a492-c15c89c4a18b","48ee1a2d-5063-413b-b604-d4d14f04a85f"],"headings":{"en":"\ud83c\udfc6 CPL: CPT LEAGUE 2027 Created Successfully!"},"contents":{"en":"Now you can register your teams! \ud83c\udfcf Don't miss out on the action."},"data":{"tournament_id":"0","type":"tournament_created"}}
+HTTP Code: 200
+Response: {"id":"35fd9e0c-1bc4-4df7-9c67-b465436a17b0","external_id":null}
+[2026-03-20 11:07:50] SAVE SUCCESS: PID=48ee1a2d-5063-413b-b604-d4d14f04a85f, UID=GUEST
+[2026-03-20 11:08:07] SAVE SUCCESS: PID=48ee1a2d-5063-413b-b604-d4d14f04a85f, UID=GUEST
+[2026-03-20 11:08:58] OneSignal Send:
+Payload: {"app_id":"ac75a76a-da38-4991-af53-39c29ef14272","include_subscription_ids":["48ee1a2d-5063-413b-b604-d4d14f04a85f"],"headings":{"en":"\ud83c\udf89 Welcome to CPT League!"},"contents":{"en":"Welcome Nithya! Your account has been created successfully. Start exploring CPT League now! \ud83c\udfcf"},"data":[]}
+HTTP Code: 400
+Response: {"errors":["Data must be a valid JSON object and cannot be a string, a number, true, or '\n    false. See bit.ly/2iBky3H for an example of a JSON object. '\n    You can use jsonlint.com as a JSON validator."]}
+[2026-03-20 11:09:00] SAVE SUCCESS: PID=48ee1a2d-5063-413b-b604-d4d14f04a85f, UID=GUEST
+[2026-03-20 11:09:10] SAVE SUCCESS: PID=48ee1a2d-5063-413b-b604-d4d14f04a85f, UID=GUEST
+[2026-03-20 11:14:17] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:14:19] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:15:53] REGISTER: Name=Vicky 2, PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827
+[2026-03-20 11:15:53] OneSignal Send:
+Payload: {"app_id":"ac75a76a-da38-4991-af53-39c29ef14272","include_subscription_ids":["b48a0e6f-e4c8-4411-b856-24ccfa4cd827"],"headings":{"en":"\ud83c\udf89 Welcome to CPT League!"},"contents":{"en":"Welcome Vicky 2! Your account has been created successfully. Start exploring CPT League now! \ud83c\udfcf"},"data":[]}
+HTTP Code: 400
+Response: {"errors":["Data must be a valid JSON object and cannot be a string, a number, true, or '\n    false. See bit.ly/2iBky3H for an example of a JSON object. '\n    You can use jsonlint.com as a JSON validator."]}
+[2026-03-20 11:15:55] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:18:37] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:18:50] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:19:21] REGISTER: Name=Vicky 2, PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827
+[2026-03-20 11:19:22] OneSignal Send:
+Payload: {"app_id":"ac75a76a-da38-4991-af53-39c29ef14272","include_subscription_ids":["b48a0e6f-e4c8-4411-b856-24ccfa4cd827"],"headings":{"en":"\ud83c\udf89 Welcome to CPT League!"},"contents":{"en":"Welcome Vicky 2! Your account has been created successfully. Start exploring CPT League now! \ud83c\udfcf"}}
+HTTP Code: 200
+Response: {"id":"384c85cc-6f92-453d-b67f-bec5a3a26708","external_id":null}
+[2026-03-20 11:19:23] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+[2026-03-20 11:20:28] SAVE SUCCESS: PID=b48a0e6f-e4c8-4411-b856-24ccfa4cd827, UID=GUEST
+2026-04-11 11:54:07 - Test Notification Sent to 9 devices. Response: {"id":"7f30dba4-646b-4825-8d29-307fc5262071","external_id":null,"errors":{"invalid_player_ids":["27c942f2-fb66-48ab-8952-c461dbcfd189","39ae985e-e9b9-43d7-98f3-df34e7e1f66e","48ee1a2d-5063-413b-b604-d4d14f04a85f","b48a0e6f-e4c8-4411-b856-24ccfa4cd827","f6eb9d92-c85e-4694-a138-e786967c0bde"]}}
+2026-04-11 12:06:32 - Uploaded Notification Sent. URL: https://cptleague.free.nf/CPT_LEAGUE/uploads/test_notifications/test_notify_1775923592.jpg Response: {"id":"cb203d79-7944-465e-b222-65727f1f0364","external_id":null,"errors":{"invalid_player_ids":["27c942f2-fb66-48ab-8952-c461dbcfd189","39ae985e-e9b9-43d7-98f3-df34e7e1f66e","48ee1a2d-5063-413b-b604-d4d14f04a85f","b48a0e6f-e4c8-4411-b856-24ccfa4cd827","f6eb9d92-c85e-4694-a138-e786967c0bde"]}}
+2026-04-11 12:13:48 - URL: https://cptleague.free.nf/CPT_LEAGUE/uploads/test_notifications/test_notify_1775924028.jpg | Response: {"id":"86b88f2e-cb8c-4561-af99-bb19d0239e6e","external_id":null,"errors":{"invalid_player_ids":["27c942f2-fb66-48ab-8952-c461dbcfd189","39ae985e-e9b9-43d7-98f3-df34e7e1f66e","48ee1a2d-5063-413b-b604-d4d14f04a85f","b48a0e6f-e4c8-4411-b856-24ccfa4cd827","f6eb9d92-c85e-4694-a138-e786967c0bde"]}}
+---
+2026-04-11 12:14:55 - URL: https://onesignal.com/images/notification_logo.png | Response: {"id":"ebf989aa-7302-4272-83c6-ccb4962b4d3b","external_id":null,"errors":{"invalid_player_ids":["27c942f2-fb66-48ab-8952-c461dbcfd189","39ae985e-e9b9-43d7-98f3-df34e7e1f66e","48ee1a2d-5063-413b-b604-d4d14f04a85f","b48a0e6f-e4c8-4411-b856-24ccfa4cd827","f6eb9d92-c85e-4694-a138-e786967c0bde"]}}
+---

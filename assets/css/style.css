@@ -1,0 +1,1931 @@
+/* 
+ * Gully Cricket Scorecard - Main Stylesheet
+ * Author: DeepSeek AI Assistant
+ * Date: October 2024
+ */
+
+/* ==========================================================================
+   1. RESET & BASE STYLES
+   ========================================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Cricket Theme Colors */
+  --cricket-green: #2e8b57;
+  --cricket-blue: #1e3a8a;
+  --cricket-white: #ffffff;
+  --cricket-cream: #f5f5dc;
+  --cricket-red: #dc2626;
+  --cricket-gold: #ffd700;
+  --cricket-gray: #6b7280;
+  --cricket-light-gray: #f3f4f6;
+
+  /* Theme Variables */
+  --primary-color: #2563eb;
+  --secondary-color: #10b981;
+  --success-color: #059669;
+  --warning-color: #d97706;
+  --danger-color: #dc2626;
+  --info-color: #0ea5e9;
+
+  /* Typography */
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Poppins", sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: #333;
+  background-color: var(--cricket-light-gray);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   2. BACKGROUND & HERO SECTION
+   ========================================================================== */
+
+/* Hero Section with Cricket Background */
+
+.hero-section {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("../images/cricket-bg.jpg") no-repeat center center;
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  color: var(--cricket-white);
+}
+
+
+.hero-overlay {
+  width: 100%;
+  padding: 4rem 0;
+}
+
+.hero-content {
+  animation: fadeInUp 1s ease-out;
+}
+
+.hero-buttons {
+  margin: 3rem 0;
+}
+
+.hero-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.hero-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  color: var(--cricket-gold);
+  margin-bottom: 1rem;
+}
+
+.hero-stats {
+  margin-top: 4rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.stat-card i {
+  font-size: 2rem;
+  color: var(--cricket-gold);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+  color: var(--cricket-white);
+}
+
+/* ==========================================================================
+   3. NAVIGATION BAR
+   ========================================================================== */
+
+.cricket-navbar {
+  background: linear-gradient(135deg,
+      var(--cricket-blue),
+      var(--cricket-green));
+  padding: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.brand-text {
+  background: linear-gradient(45deg, var(--cricket-white), var(--cricket-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-link {
+  font-weight: 800;
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   4. AUTHENTICATION PAGES
+   ========================================================================== */
+
+.auth-section {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-card {
+  background: var(--cricket-white);
+  border-radius: 15px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.auth-header {
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  color: var(--cricket-blue);
+  font-weight: 700;
+}
+
+.auth-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cricket-light-gray);
+}
+
+.form-control-lg {
+  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.form-control-lg:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ==========================================================================
+   5. DASHBOARD STYLES
+   ========================================================================== */
+
+.dashboard-container {
+  padding: 2rem 0;
+  flex: 1;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg,
+      var(--primary-color),
+      var(--secondary-color));
+  color: var(--cricket-white);
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  animation: slideInDown 0.5s ease-out;
+}
+
+.dashboard-card {
+  background: var(--cricket-white);
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: var(--cricket-white);
+  font-size: 1.5rem;
+}
+
+.dashboard-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  color: var(--cricket-blue);
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--cricket-light-gray);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--cricket-blue);
+  transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover {
+  background: var(--primary-color);
+  color: var(--cricket-white);
+  transform: translateY(-3px);
+}
+
+.quick-action-btn i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   6. PROFILE PAGE STYLES
+   ========================================================================== */
+
+.profile-container {
+  padding: 4rem 0;
+  flex: 1;
+}
+
+.profile-header {
+  margin-bottom: 3rem;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg,
+      var(--primary-color),
+      var(--secondary-color));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: var(--cricket-white);
+  font-size: 3rem;
+  border: 5px solid var(--cricket-white);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box {
+  padding: 1rem;
+  background: var(--cricket-light-gray);
+  border-radius: 10px;
+  margin: 0.5rem;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cricket-blue);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--cricket-gray);
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   7. LIVE MATCH SCORECARD
+   ========================================================================== */
+
+.live-match-card {
+  background: var(--cricket-white);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--cricket-green);
+}
+
+.match-header {
+  background: linear-gradient(135deg,
+      var(--cricket-green),
+      var(--cricket-blue));
+  padding: 2rem;
+  color: var(--cricket-white);
+}
+
+.teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.team-logo {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 1rem;
+}
+
+.team-info h4 {
+  margin-bottom: 0.25rem;
+}
+
+.team-score h3 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.vs-badge {
+  margin: 0 2rem;
+}
+
+.vs-badge .badge {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.match-details {
+  padding: 2rem;
+  background: var(--cricket-cream);
+}
+
+.balls {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.ball {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--cricket-white);
+}
+
+.ball.dot {
+  background: var(--cricket-gray);
+}
+
+.ball.single {
+  background: var(--primary-color);
+}
+
+.ball.four {
+  background: var(--success-color);
+}
+
+.ball.six {
+  background: var(--warning-color);
+}
+
+.ball.wicket {
+  background: var(--danger-color);
+}
+
+.match-footer {
+  padding: 1.5rem;
+  background: var(--cricket-light-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+.pulse {
+  width: 12px;
+  height: 12px;
+  background: var(--danger-color);
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+/* ==========================================================================
+   8. ACTIVITY & MATCH LISTS
+   ========================================================================== */
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  background: var(--cricket-light-gray);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+  background: var(--cricket-cream);
+  transform: translateX(5px);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-color);
+  color: var(--cricket-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.upcoming-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.match-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--cricket-light-gray);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.match-item:hover {
+  background: var(--cricket-cream);
+}
+
+.tournament-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--cricket-light-gray);
+  border-radius: 8px;
+}
+
+.stat-label {
+  font-weight: 500;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: var(--cricket-blue);
+}
+
+/* ==========================================================================
+   9. FOOTER
+   ========================================================================== */
+
+.cricket-footer {
+  background: linear-gradient(135deg,
+      var(--cricket-blue),
+      var(--cricket-green));
+  color: var(--cricket-white);
+  padding: 2rem 0;
+  margin-top: auto;
+}
+
+.cricket-footer h5 {
+  font-family: var(--font-heading);
+  margin-bottom: 1rem;
+}
+
+.cricket-footer p {
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   10. UTILITIES & ANIMATIONS
+   ========================================================================== */
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Loading Animation */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 2rem auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   11. RESPONSIVE DESIGN
+   ========================================================================== */
+
+/* Tablet Devices */
+@media (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .teams {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .team {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .team:last-child {
+    flex-direction: row-reverse;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 100vh;
+    padding: 4rem 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+      url("../images/home_bg.jpg") no-repeat center center;
+    background-size: cover;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-card {
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .match-footer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 576px) {
+  .hero-section {
+    padding: 3rem 0;
+  }
+
+  .hero-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .mobile-actions .btn {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 10px;
+  }
+
+  .hero-buttons .row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-buttons .col-12 {
+    max-width: 300px;
+    /* Limit width for centered stacking */
+  }
+
+  .hero-stats .col-6 {
+    width: 50%;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   12. FORM VALIDATION STYLES
+   ========================================================================== */
+
+.is-valid {
+  border-color: var(--success-color) !important;
+}
+
+.is-invalid {
+  border-color: var(--danger-color) !important;
+}
+
+.validation-error {
+  color: var(--danger-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   13. MODAL STYLES
+   ========================================================================== */
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  background: linear-gradient(135deg,
+      var(--primary-color),
+      var(--secondary-color));
+  color: var(--cricket-white);
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-title {
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   14. BUTTON STYLES
+   ========================================================================== */
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), #1e40af);
+  color: var(--cricket-white);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1e40af, var(--primary-color));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #065f46);
+  color: var(--cricket-white);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #065f46, var(--success-color));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(5, 150, 105, 0.3);
+}
+
+.btn-outline-primary {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  background: transparent;
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-color);
+  color: var(--cricket-white);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   15. ALERT STYLES
+   ========================================================================== */
+
+.alert {
+  border-radius: 10px;
+  border: none;
+  padding: 1.25rem;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d1fae5, #10b981);
+  color: #065f46;
+  border-left: 4px solid #10b981;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #fee2e2, #ef4444);
+  color: #7f1d1d;
+  border-left: 4px solid #ef4444;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #dbeafe, #3b82f6);
+  color: #1e3a8a;
+  border-left: 4px solid #3b82f6;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fef3c7, #f59e0b);
+  color: #92400e;
+  border-left: 4px solid #f59e0b;
+}
+
+/* ==========================================================================
+   16. BADGE STYLES
+   ========================================================================== */
+
+.badge {
+  padding: 0.5em 1em;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.badge.bg-primary {
+  background: linear-gradient(135deg, var(--primary-color), #1e40af) !important;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, var(--success-color), #065f46) !important;
+}
+
+.badge.bg-danger {
+  background: linear-gradient(135deg, var(--danger-color), #991b1b) !important;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, var(--warning-color), #92400e) !important;
+}
+
+/* ==========================================================================
+   END OF STYLESHEET
+   ========================================================================== */
+
+/* ==========================================================================
+   ADMIN PANEL STYLES - PROFESSIONAL DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+  /* Professional Admin Color Palette */
+  --admin-primary: #0F172A;
+  --admin-secondary: #1E293B;
+  --admin-accent: #3B82F6;
+  --admin-accent-hover: #2563EB;
+  --admin-success: #10B981;
+  --admin-warning: #F59E0B;
+  --admin-danger: #EF4444;
+  --admin-info: #06b6d4;
+  --admin-header-indigo: #6366F1;
+  --admin-light: #F1F5F9;
+  --admin-dark: #0F172A;
+  --admin-gray-50: #F8FAFC;
+  --admin-gray-100: #F1F5F9;
+  --admin-gray-200: #E2E8F0;
+  --admin-gray-300: #CBD5E1;
+  --admin-gray-400: #94A3B8;
+  --admin-gray-500: #64748B;
+  --admin-gray-600: #475569;
+  --admin-gray-700: #334155;
+  --admin-gray-800: #1E293B;
+  --admin-gray-900: #0F172A;
+
+  /* Text Colors */
+  --admin-text-primary: #F1F5F9;
+  --admin-text-secondary: #CBD5E1;
+  --admin-text-muted: #94A3B8;
+
+  /* Professional Gradients */
+  --admin-gradient-primary: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  --admin-gradient-secondary: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  --admin-gradient-accent: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+  --admin-gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --admin-gradient-card: rgba(255, 255, 255, 0.15);
+  --admin-gradient-hover: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+  --admin-gradient-header: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+}
+
+/* Admin Panel Container */
+.admin-container {
+  min-height: 100vh;
+  background: var(--admin-gradient-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Admin Header - Professional Dark Design */
+.admin-header {
+  background: var(--admin-gradient-header);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1050;
+  transition: all 0.25s ease;
+}
+
+.admin-header .navbar-brand {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.75rem;
+  color: var(--admin-text-primary);
+  text-shadow: none;
+  letter-spacing: 0.5px;
+}
+
+.admin-header .navbar-brand:hover {
+  color: var(--admin-accent);
+  transform: scale(1.02);
+  transition: all 0.25s ease;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.admin-header .navbar-brand i {
+  color: var(--admin-accent);
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Admin Sidebar - Professional Dark Design */
+.admin-sidebar {
+  background: var(--admin-gradient-primary);
+  min-height: 100vh;
+  padding: 24px 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 280px;
+  z-index: 1040;
+  overflow-y: auto;
+  transition: all 0.25s ease;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--admin-accent);
+  border-radius: 3px;
+}
+
+.admin-sidebar .sidebar-header {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+}
+
+.admin-sidebar .sidebar-header h5 {
+  color: var(--admin-text-primary);
+  font-weight: 600;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.admin-sidebar .nav-link {
+  color: var(--admin-text-secondary);
+  padding: 14px 24px;
+  margin: 4px 12px;
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-sidebar .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--admin-gradient-accent);
+  transition: left 0.25s ease;
+  z-index: -1;
+}
+
+.admin-sidebar .nav-link:hover::before {
+  left: 0;
+}
+
+.admin-sidebar .nav-link:hover {
+  color: var(--admin-text-primary);
+  transform: translateX(8px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.admin-sidebar .nav-link.active {
+  background: var(--admin-gradient-accent);
+  color: white;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+  border-left: 4px solid var(--admin-accent-hover);
+  filter: brightness(1.1);
+}
+
+.admin-sidebar .nav-link i {
+  width: 20px;
+  margin-right: 12px;
+  font-size: 1.1rem;
+  transition: transform 0.25s ease;
+}
+
+.admin-sidebar .nav-link:hover i {
+  transform: scale(1.1);
+}
+
+/* Admin Content Area */
+.admin-content {
+  margin-left: 280px;
+  background: var(--admin-gradient-primary);
+  min-height: 100vh;
+  padding: 24px;
+  transition: margin-left 0.25s ease;
+}
+
+.admin-content.expanded {
+  margin-left: 0;
+}
+
+/* Admin Cards - Modern Glassmorphism Design */
+.admin-card {
+  background: var(--admin-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--admin-gradient-accent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.admin-card:hover::before {
+  opacity: 1;
+}
+
+.admin-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.admin-card-header {
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  font-size: 1.1rem;
+}
+
+.admin-card-body {
+  padding: 24px;
+}
+
+/* Admin Statistics Cards */
+.admin-stat-card {
+  background: var(--admin-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.admin-stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  animation: rotate 4s linear infinite;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.admin-stat-card:hover::after {
+  opacity: 1;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.admin-stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 1.5rem;
+  color: white;
+  position: relative;
+  z-index: 2;
+}
+
+.admin-stat-icon.primary {
+  background: var(--admin-gradient-accent);
+}
+
+.admin-stat-icon.success {
+  background: var(--admin-gradient-success);
+}
+
+.admin-stat-icon.warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.admin-stat-icon.danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+.admin-stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--admin-text-primary);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.admin-stat-label {
+  color: var(--admin-text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Admin Tables - Professional Design */
+.admin-table {
+  background: var(--admin-gradient-card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+.admin-table thead th {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--admin-text-primary);
+  border: none;
+  padding: 16px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  border-bottom: 2px solid var(--admin-accent);
+}
+
+.admin-table tbody tr {
+  transition: all 0.25s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-table tbody tr:hover {
+  background: var(--admin-gradient-hover);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.admin-table tbody td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  color: var(--admin-text-secondary);
+}
+
+/* Status Badges - Modern Design */
+.admin-status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-status-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.admin-status-badge.active {
+  background: var(--admin-gradient-success);
+  color: white;
+}
+
+.admin-status-badge.active::before {
+  background: #34d399;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.admin-status-badge.inactive {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.admin-status-badge.pending {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+}
+
+.admin-status-badge.pending::before {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+}
+
+/* Action Buttons - Sleek Design */
+.admin-action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-action-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.25s ease;
+  transform: translate(-50%, -50%);
+}
+
+.admin-action-btn:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+.admin-action-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.admin-action-btn.edit {
+  background: var(--admin-gradient-accent);
+  color: white;
+}
+
+.admin-action-btn.delete {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+}
+
+.admin-action-btn.view {
+  background: var(--admin-gradient-success);
+  color: white;
+}
+
+/* Admin Forms - Modern Styling */
+.admin-form-group {
+  margin-bottom: 24px;
+}
+
+.admin-form-label {
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  margin-bottom: 8px;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.admin-form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.25s ease;
+  font-size: 0.95rem;
+  color: var(--admin-text-primary);
+}
+
+.admin-form-control:focus {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.admin-form-control:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-form-control::placeholder {
+  color: var(--admin-text-muted);
+}
+
+/* Admin Buttons - Professional Design */
+.admin-btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: left 0.25s ease;
+}
+
+.admin-btn:hover::before {
+  left: 0;
+}
+
+.admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.1);
+}
+
+.admin-btn-primary {
+  background: var(--admin-gradient-accent);
+  color: white;
+}
+
+.admin-btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.admin-btn-success {
+  background: var(--admin-gradient-success);
+  color: white;
+}
+
+.admin-btn-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+}
+
+.admin-btn-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+}
+
+.admin-btn-info {
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  color: white;
+}
+
+/* Admin Alerts - Modern Design */
+.admin-alert {
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.admin-alert-success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+  color: #10B981;
+  border-left: 4px solid #10B981;
+}
+
+.admin-alert-danger {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+  color: #EF4444;
+  border-left: 4px solid #EF4444;
+}
+
+.admin-alert-warning {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+  color: #F59E0B;
+  border-left: 4px solid #F59E0B;
+}
+
+.admin-alert-info {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.2) 100%);
+  color: #3B82F6;
+  border-left: 4px solid #3B82F6;
+}
+
+/* Admin Loading States */
+.admin-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--admin-gray-600);
+  font-weight: 500;
+}
+
+.admin-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--admin-gray-200);
+  border-top: 2px solid var(--admin-accent);
+  border-radius: 50%;
+  animation: admin-spin 1s linear infinite;
+}
+
+@keyframes admin-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Admin Pagination */
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.admin-pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid var(--admin-gray-300);
+  background: white;
+  border-radius: 8px;
+  color: var(--admin-gray-700);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.admin-pagination-btn:hover,
+.admin-pagination-btn.active {
+  background: var(--admin-accent);
+  color: white;
+  border-color: var(--admin-accent);
+}
+
+/* Admin Search Bar */
+.admin-search {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 2px solid var(--admin-gray-200);
+  border-radius: 12px;
+  background: white;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.admin-search-input:focus {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--admin-gray-400);
+  font-size: 1.1rem;
+}
+
+/* Admin Modals */
+.admin-modal .modal-content {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  background: var(--admin-gradient-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.admin-modal .modal-header {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--admin-text-primary);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+}
+
+.admin-modal .modal-body {
+  padding: 24px;
+  color: var(--admin-text-secondary);
+}
+
+/* Responsive Admin Design */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .admin-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .admin-content {
+    margin-left: 0;
+  }
+
+  .admin-content.expanded {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-header .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  .admin-content {
+    padding: 16px;
+  }
+
+  .admin-card-body {
+    padding: 16px;
+  }
+
+  .admin-stat-card {
+    padding: 16px;
+  }
+
+  .admin-stat-value {
+    font-size: 2rem;
+  }
+
+  .admin-table {
+    font-size: 0.85rem;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid var(--admin-gray-200);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .admin-table tbody td {
+    display: block;
+    padding: 8px 0;
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  .admin-table tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    font-weight: 600;
+    color: var(--admin-gray-600);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* Admin Animations */
+@keyframes admin-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes admin-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes admin-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.admin-animate-fade-in {
+  animation: admin-fade-in 0.5s ease forwards;
+}
+
+.admin-animate-slide-in {
+  animation: admin-slide-in-left 0.5s ease forwards;
+}
+
+.admin-animate-bounce {
+  animation: admin-bounce-in 0.6s ease forwards;
+}
+
+/* Admin Utility Classes */
+.admin-text-primary {
+  color: var(--admin-text-primary);
+}
+
+.admin-text-secondary {
+  color: var(--admin-text-secondary);
+}
+
+.admin-text-muted {
+  color: var(--admin-text-muted);
+}
+
+.admin-bg-primary {
+  background: var(--admin-gradient-primary);
+}
+
+.admin-bg-accent {
+  background: var(--admin-gradient-accent);
+}
+
+.admin-bg-light {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-shadow {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.admin-shadow-lg {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+      END OF ADMIN PANEL STYLES
+      ========================================================================== */
+/* ==========================================================================
+   MOBILE HEADER ALIGNMENT FIX (< 460px)
+   ========================================================================== */
+@media (max-width: 460px) {
+    .admin-header .container-fluid {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+    
+    .admin-header .d-flex.justify-content-between {
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+    }
+
+    .admin-header .d-flex.align-items-center {
+        gap: 12px !important;
+    }
+
+    .aud-brand-text {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        font-size: 1.4rem !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+
+    .aud-brand-text span {
+        display: flex !important;
+        flex-direction: column !important;
+        line-height: 1 !important;
+        font-size: 1.8rem !important;
+        font-weight: 900 !important;
+        text-align: left !important;
+        color: #fff !important;
+    }
+
+    .aud-brand-text i {
+        font-size: 1.4rem !important;
+        margin: 0 !important;
+    }
+
+    .aud-home-btn {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 6px !important;
+        font-size: 0.75rem !important;
+        min-width: 40px !important;
+        border: none !important;
+        background: transparent !important;
+        color: #fff !important;
+        margin: 0 !important;
+    }
+
+    .aud-home-btn i {
+        font-size: 1.3rem !important;
+        margin: 0 !important;
+        margin-bottom: 2px !important;
+    }
+
+    .aud-toggle-btn {
+        padding: 4px !important;
+        margin: 0 !important;
+        font-size: 1.5rem !important;
+    }
+    
+    /* Hide Logout on very small screens to maintain single row alignment */
+    .admin-header .btn-outline-light.btn-sm:not(.aud-home-btn) {
+        display: none !important;
+    }
+}
+
+
+/* Highlighting Logged-in Player in Ranking Lists */
+.highlighted-row, 
+.highlighted-row td {
+    background-color: #fff9c4 !important; /* Light yellow background */
+}
+
+.highlighted-row {
+    border-left: 5px solid #fbc02d !important; /* Gold side border */
+    transition: all 0.3s ease;
+}
+
+.highlighted-row:hover,
+.highlighted-row:hover td {
+    background-color: #fff176 !important; /* Slightly darker on hover */
+}
+
