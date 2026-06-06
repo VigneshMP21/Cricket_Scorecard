@@ -1,6 +1,6 @@
 .env
-players/
-teams/
-tournaments/
-users/
-banners/
+uploads/players/
+uploads/teams/
+uploads/tournaments/
+uploads/users/
+assets/images/banners/
