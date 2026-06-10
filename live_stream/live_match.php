@@ -2341,6 +2341,36 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             return 'pm-status-neutral';
         }
 
+        function teamColorBackground(color, opacity = 0.35) {
+            const value = String(color || '').trim();
+            let r = 13, g = 110, b = 253;
+
+            const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+            if (hexMatch) {
+                let hex = hexMatch[1];
+                if (hex.length === 3) {
+                    hex = hex.split('').map(ch => ch + ch).join('');
+                }
+                r = parseInt(hex.slice(0, 2), 16);
+                g = parseInt(hex.slice(2, 4), 16);
+                b = parseInt(hex.slice(4, 6), 16);
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            }
+
+            const rgbMatch = value.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
+            if (rgbMatch) {
+                r = Math.min(255, Number(rgbMatch[1]));
+                g = Math.min(255, Number(rgbMatch[2]));
+                b = Math.min(255, Number(rgbMatch[3]));
+            }
+
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+
+        function isPreviousMatchWinner(value) {
+            return value === true || value === 1 || value === '1' || String(value).toLowerCase() === 'true';
+        }
+
         function showPreviousMatchesOverlay(done = null, skipAudio = false) {
             const overlay = document.getElementById('previousMatchesOverlay');
             const listContainer = document.getElementById('pmList');
@@ -2356,26 +2386,25 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         listContainer.innerHTML = '';
                         data.matches.forEach(m => {
                             const row = document.createElement('div');
+                            const team1Won = isPreviousMatchWinner(m.team1_is_winner);
+                            const team2Won = isPreviousMatchWinner(m.team2_is_winner);
+                            const team1Style = team1Won ? ` style="background:${teamColorBackground(m.team1_color)}"` : '';
+                            const team2Style = team2Won ? ` style="background:${teamColorBackground(m.team2_color)}"` : '';
                             row.className = 'um-match-row pm-match-row';
                             row.innerHTML = `
-                                <div class="um-team-side">
+                                <div class="um-team-side pm-team-side ${team1Won ? 'pm-winner-side' : 'pm-loser-side'}"${team1Style}>
                                     <img src="../uploads/teams/${escapeHtml(m.team1_logo || '')}" class="um-team-logo" onerror="this.src='../assets/images/default-team.png'">
                                     <div class="um-team-name">${escapeHtml(m.team1_name)}</div>
                                     <div class="um-team-code">${escapeHtml(m.team1_code || '')}</div>
-                                    <div class="pm-score">${escapeHtml(m.team1_score || '-')}</div>
                                     <div class="pm-status ${previousStatusClass(m.team1_status)}">${escapeHtml(m.team1_status || 'DONE')}</div>
                                 </div>
-                                <div class="um-center">
-                                    <div class="um-vs-box pm-result-box">RESULT</div>
-                                    <div class="um-match-type">${escapeHtml(m.result_text || 'Match completed')}</div>
-                                    <div class="um-date-time">${escapeHtml(m.match_date || '')}${m.match_time ? ' | ' + escapeHtml(m.match_time) : ''}</div>
-                                    <div class="um-venue">${escapeHtml(m.venue || '')}</div>
+                                <div class="um-center pm-center">
+                                    <div class="pm-result-text">${escapeHtml(m.result_text || 'Match completed')}</div>
                                 </div>
-                                <div class="um-team-side">
+                                <div class="um-team-side pm-team-side ${team2Won ? 'pm-winner-side' : 'pm-loser-side'}"${team2Style}>
                                     <img src="../uploads/teams/${escapeHtml(m.team2_logo || '')}" class="um-team-logo" onerror="this.src='../assets/images/default-team.png'">
                                     <div class="um-team-name">${escapeHtml(m.team2_name)}</div>
                                     <div class="um-team-code">${escapeHtml(m.team2_code || '')}</div>
-                                    <div class="pm-score">${escapeHtml(m.team2_score || '-')}</div>
                                     <div class="pm-status ${previousStatusClass(m.team2_status)}">${escapeHtml(m.team2_status || 'DONE')}</div>
                                 </div>
                             `;

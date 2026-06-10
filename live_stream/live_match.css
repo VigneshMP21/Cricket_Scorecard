@@ -4736,16 +4736,56 @@ body {
   font-style: italic;
 }
 .pm-match-row {
-  border-left: 5px solid #111;
+  grid-template-columns: minmax(0, 1fr) 190px minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
-.pm-result-box {
-  background: #111;
+.pm-team-side {
+  justify-content: center;
+  min-height: 118px;
+  padding: 12px 14px;
 }
-.pm-score {
-  color: #111;
-  font-size: 0.78rem;
-  font-weight: 800;
-  margin-top: 2px;
+.pm-team-side .um-team-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background: #fff;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+.pm-team-side .um-team-name {
+  max-width: 100%;
+  color: #111827;
+  line-height: 1.15;
+}
+.pm-winner-side {
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+.pm-loser-side {
+  background: #f8fafc;
+}
+.pm-center {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 118px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+  border-left: 1px solid rgba(15, 23, 42, 0.08);
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+}
+.pm-result-text {
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+  text-transform: uppercase;
 }
 .pm-status {
   border-radius: 999px;
@@ -4754,14 +4794,16 @@ body {
   line-height: 1;
   margin-top: 5px;
   padding: 5px 8px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 .pm-status-won {
-  background: #dcfce7;
-  color: #166534;
+  background: #bbf7d0;
+  color: #14532d;
 }
 .pm-status-lost {
   background: #fee2e2;
-  color: #991b1b;
+  color: #7f1d1d;
 }
 .pm-status-tie {
   background: #fef3c7;
@@ -4775,6 +4817,25 @@ body {
   .um-match-row {
     grid-template-columns: 1fr 90px 1fr;
     padding: 10px 8px;
+  }
+  .pm-match-row {
+    grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1fr);
+    padding: 0;
+  }
+  .pm-team-side {
+    min-height: 104px;
+    padding: 10px 8px;
+  }
+  .pm-center {
+    min-height: 104px;
+    padding: 10px 8px;
+  }
+  .pm-result-text {
+    font-size: 0.72rem;
+  }
+  .pm-team-side .um-team-logo {
+    width: 36px;
+    height: 36px;
   }
   .um-team-logo {
     width: 35px;
@@ -4799,9 +4860,6 @@ body {
   .um-venue {
     font-size: 0.7rem;
   }
-  .pm-score {
-    font-size: 0.7rem;
-  }
   .pm-status {
     font-size: 0.6rem;
     padding: 4px 6px;
@@ -4816,6 +4874,22 @@ body {
     gap: 2px;
     padding: 8px 5px;
   }
+  .pm-match-row {
+    grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+    gap: 0;
+    padding: 0;
+  }
+  .pm-team-side {
+    min-height: 96px;
+    padding: 8px 6px;
+  }
+  .pm-center {
+    min-height: 96px;
+    padding: 8px 6px;
+  }
+  .pm-result-text {
+    font-size: 0.62rem;
+  }
   .um-team-name {
     font-size: 0.75rem;
   }
@@ -4828,6 +4902,13 @@ body {
   }
   .um-center {
     padding: 2px 0;
+  }
+  .pm-team-side .um-team-logo {
+    width: 32px;
+    height: 32px;
+  }
+  .um-center.pm-center {
+    padding: 8px 6px;
   }
   .um-vs-box {
     padding: 1px 6px;

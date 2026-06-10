@@ -2,11 +2,93 @@
 require_once '../includes/db.php';
 header('Content-Type: application/json');
 
-function format_score($runs, $wickets, $overs)
+function plural_text($count, $singular, $plural)
 {
-    if ($runs === null)
-        return '';
-    return (int) $runs . '/' . (int) $wickets . ' (' . ($overs ?: '0.0') . ')';
+    $count = (int) $count;
+    return $count . ' ' . ($count === 1 ? $singular : $plural);
+}
+
+function result_innings_pair(array $innings)
+{
+    $super_over_innings = [];
+    foreach ($innings as $inn) {
+        if ((int) $inn['inning_number'] >= 3) {
+            $super_over_innings[] = $inn;
+        }
+    }
+
+    if (count($super_over_innings) >= 2) {
+        return [$super_over_innings[0], $super_over_innings[1]];
+    }
+
+    if (count($innings) >= 2) {
+        return [$innings[0], $innings[1]];
+    }
+
+    return [];
+}
+
+function winner_name_for_match(array $match, $winner_id)
+{
+    if ((int) $winner_id === (int) $match['team1_id']) {
+        return $match['team1_name'];
+    }
+    if ((int) $winner_id === (int) $match['team2_id']) {
+        return $match['team2_name'];
+    }
+    return '';
+}
+
+function winner_color_for_match(array $match, $winner_id)
+{
+    if ((int) $winner_id === (int) $match['team1_id']) {
+        return $match['team1_color'];
+    }
+    if ((int) $winner_id === (int) $match['team2_id']) {
+        return $match['team2_color'];
+    }
+    return '';
+}
+
+function build_result_text(array $match, array $innings, $winner_id)
+{
+    $winner_name = winner_name_for_match($match, $winner_id);
+    if ($winner_name === '') {
+        return $match['result'] ?: 'Match completed';
+    }
+
+    $pair = result_innings_pair($innings);
+    if (count($pair) < 2) {
+        return $winner_name . ' won';
+    }
+
+    $first = $pair[0];
+    $second = $pair[1];
+    $first_runs = (int) $first['total_runs'];
+    $second_runs = (int) $second['total_runs'];
+    $winner_id = (int) $winner_id;
+    $is_super_over = ((int) $first['inning_number'] >= 3 || (int) $second['inning_number'] >= 3);
+
+    if ($winner_id === (int) $first['batting_team_id']) {
+        $margin = max(0, $first_runs - $second_runs);
+        if ($margin > 0) {
+            return $winner_name . ' won by ' . plural_text($margin, 'run', 'runs');
+        }
+    }
+
+    if ($winner_id === (int) $second['batting_team_id']) {
+        if ($second_runs > $first_runs) {
+            $wicket_limit = $is_super_over ? 2 : 10;
+            $wickets_left = max(1, $wicket_limit - (int) $second['wickets']);
+            return $winner_name . ' won by ' . plural_text($wickets_left, 'wicket', 'wickets');
+        }
+    }
+
+    if ($is_super_over) {
+        return $winner_name . ' won by super over';
+    }
+
+    return $winner_name . ' won';
 }
 
 try {
@@ -15,7 +97,9 @@ try {
     $stmt = $pdo->prepare("
         SELECT m.id, m.match_date, m.match_time, m.venue, m.match_type, m.winner_id, m.result,
                t1.id as team1_id, t1.team_name as team1_name, t1.team_logo as team1_logo, t1.team_code as team1_code,
-               t2.id as team2_id, t2.team_name as team2_name, t2.team_logo as team2_logo, t2.team_code as team2_code
+               COALESCE(NULLIF(t1.team_color, ''), '#0d6efd') as team1_color,
+               t2.id as team2_id, t2.team_name as team2_name, t2.team_logo as team2_logo, t2.team_code as team2_code,
+               COALESCE(NULLIF(t2.team_color, ''), '#dc3545') as team2_color
         FROM matches m
         JOIN teams t1 ON m.team1_id = t1.id
         JOIN teams t2 ON m.team2_id = t2.id
@@ -38,26 +122,21 @@ try {
         $innings_stmt->execute([$match['id']]);
         $innings = $innings_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $team_scores = [
-            (int) $match['team1_id'] => [],
-            (int) $match['team2_id'] => []
-        ];
-
-        foreach ($innings as $inn) {
-            $label = ((int) $inn['inning_number'] >= 3 ? 'SO ' : '') .
-                format_score($inn['total_runs'], $inn['wickets'], $inn['overs_bowled']);
-            $team_scores[(int) $inn['batting_team_id']][] = $label;
+        $winner_id = (int) ($match['winner_id'] ?? 0);
+        $result = strtolower(trim((string) ($match['result'] ?? '')));
+        if ($winner_id <= 0 && $result === 'team1') {
+            $winner_id = (int) $match['team1_id'];
+        } elseif ($winner_id <= 0 && $result === 'team2') {
+            $winner_id = (int) $match['team2_id'];
         }
 
-        $match['team1_score'] = implode(' / ', $team_scores[(int) $match['team1_id']] ?? []);
-        $match['team2_score'] = implode(' / ', $team_scores[(int) $match['team2_id']] ?? []);
-
-        $winner_id = (int) ($match['winner_id'] ?? 0);
-        $result = strtolower((string) ($match['result'] ?? ''));
+        $match['winner_team_id'] = $winner_id > 0 ? $winner_id : null;
+        $match['winner_team_color'] = $winner_id > 0 ? winner_color_for_match($match, $winner_id) : '';
+        $match['team1_is_winner'] = $winner_id === (int) $match['team1_id'];
+        $match['team2_is_winner'] = $winner_id === (int) $match['team2_id'];
 
         if ($winner_id > 0) {
-            $winner_name = ($winner_id === (int) $match['team1_id']) ? $match['team1_name'] : $match['team2_name'];
-            $match['result_text'] = $winner_name . ' won';
+            $match['result_text'] = build_result_text($match, $innings, $winner_id);
             $match['team1_status'] = $winner_id === (int) $match['team1_id'] ? 'WON' : 'LOST';
             $match['team2_status'] = $winner_id === (int) $match['team2_id'] ? 'WON' : 'LOST';
         } elseif ($result === 'tie' || $result === 'draw') {
