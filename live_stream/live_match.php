@@ -311,7 +311,10 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     style="width: 200px; height: 200px; border-radius: 12px; border: 5px solid #fff; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             </div>
             <div id="wicketPlayerName" class="duck-player-name"
-                style="color: #fff; font-size: 2.2rem; margin-bottom: 8px;">Player Name - 0/0</div>
+                style="color: #fff; font-size: 2.2rem; margin-bottom: 8px;">
+                <span id="wicketPlayerNameText">Player Name</span> -
+                <span id="wicketRuns">0</span><span class="wicket-balls">(<span id="wicketBalls">0</span>)</span>
+            </div>
             <div id="wicketStats" style="font-size: 1.35rem; font-weight: 800; color: #ffeb3b;">b. Bowler</div>
         </div>
     </div>
@@ -587,6 +590,18 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 <h2>Upcoming Matches</h2>
             </div>
             <div id="umList" class="um-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Matches Overlay -->
+    <div id="previousMatchesOverlay" class="upcoming-matches-overlay">
+        <div class="um-card">
+            <div class="um-header">
+                <h2>Previous Matches</h2>
+            </div>
+            <div id="pmList" class="um-list">
                 <!-- Populated by JS -->
             </div>
         </div>
@@ -1664,6 +1679,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     bowling_team_display: '../assets/audio/bowling_team_display.mp3',
                     partnership: '../assets/audio/partnership_overlay.mp3',
                     upcoming_match: '../assets/audio/upcoming_match.mp3',
+                    previous_match: '../assets/audio/upcoming_match.mp3',
                     next_match: '../assets/audio/upcoming_match.mp3'
                 };
                 this.unlockingPromise = null;
@@ -1675,7 +1691,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 for (const [key, src] of Object.entries(this.sources)) {
                     const a = new Audio(src);
                     a.preload = 'auto';
-                    const loopingKeys = ['scorecard', 'graph', 'batting_team', 'target', 'bar_graph', 'projected_score', 'bowling_team_display', 'partnership', 'upcoming_match', 'next_match'];
+                    const loopingKeys = ['scorecard', 'graph', 'batting_team', 'target', 'bar_graph', 'projected_score', 'bowling_team_display', 'partnership', 'upcoming_match', 'previous_match', 'next_match'];
                     if (loopingKeys.includes(key)) a.loop = true;
                     this.audios[key] = a;
                 }
@@ -1797,6 +1813,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     'bowler_scorecard': 'scorecard', // bowlers also use scorecard audio
                     'comparison_graph': 'graph',
                     'upcoming_matches': 'upcoming_match',
+                    'previous_matches': 'previous_match',
                     'next_match': 'next_match'
                 };
 
@@ -2062,6 +2079,10 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                                 overlayManager.add('remote_upcoming_matches', data.match_info.overlay_id, 2, (done) => {
                                     showUpcomingMatchesOverlay(done);
                                 });
+                            } else if (oType === 'previous_matches') {
+                                overlayManager.add('remote_previous_matches', data.match_info.overlay_id, 2, (done) => {
+                                    showPreviousMatchesOverlay(done);
+                                });
                             } else if (oType === 'next_match') {
                                 overlayManager.add('remote_next_match', data.match_info.overlay_id, 2, (done) => {
                                     showNextMatchOverlay(done);
@@ -2073,7 +2094,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         } else if (firstLoad && data.match_info.overlay_id) {
                             // Persistent Overlays: Show even on first load if active
                             const oType = data.match_info.overlay_type;
-                            if (oType === 'partnership' || oType === 'batting_team' || oType === 'bowling_team' || oType === 'comparison_graph' || oType === 'target' || oType === 'projected_score' || oType === 'runs_wickets_graph' || oType === 'batting_scorecard' || oType === 'bowler_scorecard' || oType === 'upcoming_matches' || oType === 'next_match') {
+                            if (oType === 'partnership' || oType === 'batting_team' || oType === 'bowling_team' || oType === 'comparison_graph' || oType === 'target' || oType === 'projected_score' || oType === 'runs_wickets_graph' || oType === 'batting_scorecard' || oType === 'bowler_scorecard' || oType === 'upcoming_matches' || oType === 'previous_matches' || oType === 'next_match') {
                                 // Re-trigger persistent overlay immediately on first load
                                 setTimeout(() => {
                                     if (oType === 'partnership') showPartnershipOverlay(data);
@@ -2086,6 +2107,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                                     else if (oType === 'batting_scorecard') showBattingScorecardOverlay(data);
                                     else if (oType === 'bowler_scorecard') showBowlerScorecardOverlay(data);
                                     else if (oType === 'upcoming_matches') showUpcomingMatchesOverlay();
+                                    else if (oType === 'previous_matches') showPreviousMatchesOverlay();
                                     else if (oType === 'next_match') showNextMatchOverlay();
                                 }, 1000); // Small delay to ensure UI is ready
                             }
@@ -2252,12 +2274,23 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
         let persistentDoneCallback = null;
         let comparisonChartInstance = null;
 
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (ch) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[ch]));
+        }
+
         function showUpcomingMatchesOverlay(done = null, skipAudio = false) {
             const overlay = document.getElementById('upcomingMatchesOverlay');
             const listContainer = document.getElementById('umList');
 
             listContainer.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x text-muted"></i><p class="mt-3">Fetching upcoming matches...</p></div>';
             overlay.style.display = 'flex';
+            overlay.style.pointerEvents = 'auto';
 
             fetch('get_upcoming_matches.php')
                 .then(r => r.json())
@@ -2300,12 +2333,74 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             if (done) persistentDoneCallback = done;
         }
 
+        function previousStatusClass(status) {
+            const normalized = String(status || '').toUpperCase();
+            if (normalized === 'WON') return 'pm-status-won';
+            if (normalized === 'LOST') return 'pm-status-lost';
+            if (normalized === 'TIE') return 'pm-status-tie';
+            return 'pm-status-neutral';
+        }
+
+        function showPreviousMatchesOverlay(done = null, skipAudio = false) {
+            const overlay = document.getElementById('previousMatchesOverlay');
+            const listContainer = document.getElementById('pmList');
+
+            listContainer.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x text-muted"></i><p class="mt-3">Fetching previous matches...</p></div>';
+            overlay.style.display = 'flex';
+            overlay.style.pointerEvents = 'auto';
+
+            fetch(`get_previous_matches.php?id=${MATCH_ID}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.matches.length > 0) {
+                        listContainer.innerHTML = '';
+                        data.matches.forEach(m => {
+                            const row = document.createElement('div');
+                            row.className = 'um-match-row pm-match-row';
+                            row.innerHTML = `
+                                <div class="um-team-side">
+                                    <img src="../uploads/teams/${escapeHtml(m.team1_logo || '')}" class="um-team-logo" onerror="this.src='../assets/images/default-team.png'">
+                                    <div class="um-team-name">${escapeHtml(m.team1_name)}</div>
+                                    <div class="um-team-code">${escapeHtml(m.team1_code || '')}</div>
+                                    <div class="pm-score">${escapeHtml(m.team1_score || '-')}</div>
+                                    <div class="pm-status ${previousStatusClass(m.team1_status)}">${escapeHtml(m.team1_status || 'DONE')}</div>
+                                </div>
+                                <div class="um-center">
+                                    <div class="um-vs-box pm-result-box">RESULT</div>
+                                    <div class="um-match-type">${escapeHtml(m.result_text || 'Match completed')}</div>
+                                    <div class="um-date-time">${escapeHtml(m.match_date || '')}${m.match_time ? ' | ' + escapeHtml(m.match_time) : ''}</div>
+                                    <div class="um-venue">${escapeHtml(m.venue || '')}</div>
+                                </div>
+                                <div class="um-team-side">
+                                    <img src="../uploads/teams/${escapeHtml(m.team2_logo || '')}" class="um-team-logo" onerror="this.src='../assets/images/default-team.png'">
+                                    <div class="um-team-name">${escapeHtml(m.team2_name)}</div>
+                                    <div class="um-team-code">${escapeHtml(m.team2_code || '')}</div>
+                                    <div class="pm-score">${escapeHtml(m.team2_score || '-')}</div>
+                                    <div class="pm-status ${previousStatusClass(m.team2_status)}">${escapeHtml(m.team2_status || 'DONE')}</div>
+                                </div>
+                            `;
+                            listContainer.appendChild(row);
+                        });
+                    } else {
+                        listContainer.innerHTML = '<div class="text-center py-5"><h3>No previous matches found</h3></div>';
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching previous matches:", err);
+                    listContainer.innerHTML = '<div class="text-center py-5"><h3 class="text-danger">Error loading data</h3></div>';
+                });
+
+            if (!skipAudio) audioManager.play('previous_match');
+            if (done) persistentDoneCallback = done;
+        }
+
         function showNextMatchOverlay(done = null, skipAudio = false) {
             const overlay = document.getElementById('nextMatchOverlay');
             const listContainer = document.getElementById('nmList');
 
             listContainer.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x text-muted"></i><p class="mt-3">Fetching next match...</p></div>';
             overlay.style.display = 'flex';
+            overlay.style.pointerEvents = 'auto';
 
             fetch('get_next_match.php')
                 .then(r => r.json())
@@ -2359,6 +2454,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 'battingScorecardOverlay',
                 'bowlerScorecardOverlay',
                 'upcomingMatchesOverlay',
+                'previousMatchesOverlay',
                 'nextMatchOverlay'
             ];
 
@@ -3945,7 +4041,9 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
 
         function showWicketPopup(batterName, batterImg, runs, balls, dismissalText = '', done = null, duration = 4000, playSound = true) {
             const popup = document.getElementById('wicketPopup');
-            document.getElementById('wicketPlayerName').innerText = `${batterName} - ${runs}/${balls}`;
+            document.getElementById('wicketPlayerNameText').innerText = batterName;
+            document.getElementById('wicketRuns').innerText = runs;
+            document.getElementById('wicketBalls').innerText = balls;
             document.getElementById('wicketStats').innerText = dismissalText || 'out';
 
             const imgEl = document.getElementById('wicketPlayerImg');
@@ -4462,6 +4560,18 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             width: 200px !important;
             height: 200px !important;
             border-radius: 12px !important;
+        }
+
+        #wicketRuns {
+            font-size: 1em;
+            font-weight: 900;
+        }
+
+        .wicket-balls {
+            font-size: 0.62em;
+            font-weight: 800;
+            margin-left: 2px;
+            vertical-align: baseline;
         }
 
         #wicketPlayerName,

@@ -770,6 +770,9 @@ require_once '../../includes/header.php';
                     <button class="btn overlay-btn py-3 fw-bold" onclick="triggerOverlay('upcoming_matches')">
                         <i class="fas fa-calendar-alt me-2"></i> Upcoming Matches
                     </button>
+                    <button class="btn overlay-btn py-3 fw-bold" onclick="triggerOverlay('previous_matches')">
+                        <i class="fas fa-history me-2"></i> Previous Matches
+                    </button>
                     <button class="btn overlay-btn py-3 fw-bold scoring-btn" onclick="triggerOverlay('next_match')">
                         <i class="fas fa-forward me-2"></i> Next Match
                     </button>
@@ -1887,7 +1890,7 @@ require_once '../../includes/header.php';
         // Overlay Restoration (STOP Button)
         const activeOType = data.match_info.overlay_type;
         const overlayCtrl = document.getElementById('overlayControl');
-        if (activeOType && ['batting_team', 'bowling_team', 'partnership', 'comparison_graph', 'target', 'projected_score', 'runs_wickets_graph', 'batting_scorecard', 'bowler_scorecard', 'upcoming_matches', 'next_match'].includes(activeOType)) {
+        if (activeOType && ['batting_team', 'bowling_team', 'partnership', 'comparison_graph', 'target', 'projected_score', 'runs_wickets_graph', 'batting_scorecard', 'bowler_scorecard', 'upcoming_matches', 'previous_matches', 'next_match'].includes(activeOType)) {
             let dName = 'Overlay';
             if (activeOType === 'batting_team') dName = 'Batting Team';
             else if (activeOType === 'bowling_team') dName = 'Bowling Team';
@@ -1899,6 +1902,7 @@ require_once '../../includes/header.php';
             else if (activeOType === 'batting_scorecard') dName = 'Batting Scorecard';
             else if (activeOType === 'bowler_scorecard') dName = 'Bowler Scorecard';
             else if (activeOType === 'upcoming_matches') dName = 'Upcoming Matches';
+            else if (activeOType === 'previous_matches') dName = 'Previous Matches';
             else if (activeOType === 'next_match') dName = 'Next Match';
 
             document.getElementById('activeOverlayName').innerText = dName;
@@ -2300,7 +2304,7 @@ require_once '../../includes/header.php';
         sendRequest(formData, () => {
             closeModals();
             // Show stop control for certain overlays
-            if (['batting_team', 'bowling_team', 'partnership', 'comparison_graph', 'target', 'projected_score', 'runs_wickets_graph', 'batting_scorecard', 'bowler_scorecard', 'upcoming_matches', 'next_match'].includes(type)) {
+            if (['batting_team', 'bowling_team', 'partnership', 'comparison_graph', 'target', 'projected_score', 'runs_wickets_graph', 'batting_scorecard', 'bowler_scorecard', 'upcoming_matches', 'previous_matches', 'next_match'].includes(type)) {
                 let displayName = 'Overlay';
                 if (type === 'batting_team') displayName = 'Batting Team';
                 else if (type === 'bowling_team') displayName = 'Bowling Team';
@@ -2312,6 +2316,7 @@ require_once '../../includes/header.php';
                 else if (type === 'batting_scorecard') displayName = 'Batting Scorecard';
                 else if (type === 'bowler_scorecard') displayName = 'Bowler Scorecard';
                 else if (type === 'upcoming_matches') displayName = 'Upcoming Matches';
+                else if (type === 'previous_matches') displayName = 'Previous Matches';
                 else if (type === 'next_match') displayName = 'Next Match';
 
                 document.getElementById('activeOverlayName').innerText = displayName;
