@@ -109,139 +109,6 @@ function uploadNotificationBannerToCloudinary(?string $imageUrl, string $folder)
     return $imageUrl;
 }
 
-function cleanNotificationPlayerIds(array $playerIds): array
-{
-    return array_values(array_unique(array_filter(array_map(static function ($id) {
-        return trim((string) $id);
-    }, $playerIds))));
-}
-
-function removeInvalidNotificationPlayerIds(PDO $pdo, array $invalidPlayerIds): int
-{
-    $invalidPlayerIds = cleanNotificationPlayerIds($invalidPlayerIds);
-    if (empty($invalidPlayerIds)) {
-        return 0;
-    }
-
-    $placeholders = implode(',', array_fill(0, count($invalidPlayerIds), '?'));
-    $stmt = $pdo->prepare("DELETE FROM user_devices WHERE onesignal_player_id IN ($placeholders)");
-    $stmt->execute($invalidPlayerIds);
-    return $stmt->rowCount();
-}
-
-function formatNotificationErrorMessage($errors): string
-{
-    if (is_string($errors)) {
-        return $errors;
-    }
-
-    if (is_array($errors)) {
-        $messages = [];
-        array_walk_recursive($errors, static function ($value) use (&$messages) {
-            if (is_scalar($value)) {
-                $messages[] = trim((string) $value);
-            }
-        });
-        $messages = array_values(array_filter(array_unique($messages)));
-        return $messages ? implode(' ', $messages) : json_encode($errors);
-    }
-
-    return (string) $errors;
-}
-
-function sendManagedNotification(PDO $pdo, array $playerIds, string $title, string $message, array $additionalData = [], string $url = ''): array
-{
-    $playerIds = cleanNotificationPlayerIds($playerIds);
-    if (empty($playerIds)) {
-        return [
-            'success' => false,
-            'message' => 'No active devices found to send notifications.',
-            'sent_count' => 0,
-            'removed_count' => 0
-        ];
-    }
-
-    $configError = function_exists('getOneSignalConfigurationError') ? getOneSignalConfigurationError() : '';
-    if ($configError !== '') {
-        return [
-            'success' => false,
-            'message' => $configError,
-            'sent_count' => 0,
-            'removed_count' => 0
-        ];
-    }
-
-    $response = sendOneSignalNotification($playerIds, $title, $message, $additionalData, $url);
-    if ($response === false || $response === null || $response === '') {
-        return [
-            'success' => false,
-            'message' => 'OneSignal request failed. Check server network access and ONESIGNAL_API_KEY.',
-            'sent_count' => 0,
-            'removed_count' => 0
-        ];
-    }
-
-    $decoded = json_decode((string) $response, true);
-    if (!is_array($decoded)) {
-        error_log('Notification manager invalid OneSignal response: ' . substr((string) $response, 0, 300));
-        return [
-            'success' => false,
-            'message' => 'OneSignal returned an invalid response.',
-            'sent_count' => 0,
-            'removed_count' => 0
-        ];
-    }
-
-    $invalidIds = [];
-    if (isset($decoded['errors']['invalid_player_ids']) && is_array($decoded['errors']['invalid_player_ids'])) {
-        $invalidIds = $decoded['errors']['invalid_player_ids'];
-    }
-    $removedCount = removeInvalidNotificationPlayerIds($pdo, $invalidIds);
-    $sentCount = isset($decoded['recipients']) && is_numeric($decoded['recipients'])
-        ? max(0, (int) $decoded['recipients'])
-        : max(0, count($playerIds) - count($invalidIds));
-
-    if (!empty($decoded['id']) && $sentCount > 0) {
-        $detail = "Sent to {$sentCount} active device" . ($sentCount === 1 ? '' : 's') . ".";
-        if ($removedCount > 0) {
-            $detail .= " Removed {$removedCount} expired device ID" . ($removedCount === 1 ? '' : 's') . ".";
-        }
-
-        return [
-            'success' => true,
-            'message' => $detail,
-            'sent_count' => $sentCount,
-            'removed_count' => $removedCount
-        ];
-    }
-
-    if (!empty($decoded['id']) && $sentCount === 0) {
-        return [
-            'success' => false,
-            'message' => 'All saved device IDs were expired or invalid. Ask users to reopen the app/site so new IDs are registered.',
-            'sent_count' => 0,
-            'removed_count' => $removedCount
-        ];
-    }
-
-    $errorMessage = 'OneSignal rejected the notification.';
-    if (!empty($decoded['errors'])) {
-        $errorDetails = formatNotificationErrorMessage($decoded['errors']);
-        if (stripos($errorDetails, 'Access denied') !== false || stripos($errorDetails, 'valid API key') !== false) {
-            $errorMessage = 'OneSignal API key was rejected. Update ONESIGNAL_API_KEY in .env with the REST API Key from OneSignal Settings > Keys & IDs.';
-        } else {
-            $errorMessage .= ' ' . $errorDetails;
-        }
-    }
-
-    return [
-        'success' => false,
-        'message' => $errorMessage,
-        'sent_count' => 0,
-        'removed_count' => $removedCount
-    ];
-}
-
 function buildRankingMedalMarkup(int $rank): string
 {
     $medalConfig = [
@@ -901,8 +768,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
 
                         $match_banner = generateMatchBanner($banner_data);
 
-                        $send_result = sendManagedNotification(
-                            $pdo,
+                        sendOneSignalNotification(
                             $target_player_ids,
                             $title_msg,
                             $content_msg,
@@ -916,11 +782,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
                             ],
                             $base_url . "view/view_match.php?id=$match_id"
                         );
-                        if ($send_result['success']) {
-                            $success_msg = "Match announcement sent successfully to the playing teams! " . $send_result['message'];
-                        } else {
-                            $error_msg = $send_result['message'];
-                        }
+                        $success_msg = "Match announcement sent successfully to the playing teams!";
                     } else {
                         $error_msg = "No devices found for the players in this match.";
                     }
@@ -1104,8 +966,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
                     $all_player_ids = array_unique(array_merge($registered_player_ids, $guest_player_ids));
 
                     if (!empty($all_player_ids)) {
-                        $send_result = sendManagedNotification(
-                            $pdo,
+                        sendOneSignalNotification(
                             $all_player_ids,
                             $title_msg,
                             $content_msg,
@@ -1119,11 +980,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
                             ],
                             $base_url . "view/view_point_table.php?id=$table_id"
                         );
-                        if ($send_result['success']) {
-                            $success_msg = "Point table announcement sent successfully to all members! " . $send_result['message'];
-                        } else {
-                            $error_msg = $send_result['message'];
-                        }
+                        $success_msg = "Point table announcement sent successfully to all members!";
                     } else {
                         $error_msg = "No devices found to send notifications.";
                     }
@@ -1235,8 +1092,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
                         $ranking_banner = $base_url . "assets/images/cricket-bg.jpg";
                     }
 
-                    $send_result = sendManagedNotification(
-                        $pdo,
+                    sendOneSignalNotification(
                         $all_player_ids,
                         $title_msg,
                         trim($content_msg),
@@ -1249,11 +1105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_notification']))
                         ],
                         $target_url
                     );
-                    if ($send_result['success']) {
-                        $success_msg = "Notification sent to all members successfully! " . $send_result['message'];
-                    } else {
-                        $error_msg = $send_result['message'];
-                    }
+                    $success_msg = "Notification sent to all members successfully!";
                 } else {
                     $error_msg = "No devices found to send notifications.";
                 }

@@ -1,90 +1,12 @@
 <?php
 // includes/onesignal_utils.php
 
-function load_onesignal_environment()
-{
-    static $loaded = false;
-    if ($loaded) {
-        return;
-    }
-    $loaded = true;
-
-    $projectRoot = dirname(__DIR__);
-    $autoload = $projectRoot . '/vendor/autoload.php';
-    if (file_exists($autoload)) {
-        require_once $autoload;
-    }
-
-    if (class_exists('Dotenv\Dotenv') && file_exists($projectRoot . '/.env')) {
-        try {
-            $dotenv = Dotenv\Dotenv::createImmutable($projectRoot);
-            if (method_exists($dotenv, 'safeLoad')) {
-                $dotenv->safeLoad();
-            } else {
-                $dotenv->load();
-            }
-        } catch (Throwable $e) {
-            error_log('OneSignal dotenv load error: ' . $e->getMessage());
-        }
-    }
-}
-
-function onesignal_env_value($key)
-{
-    $value = $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key);
-    if ($value === false || $value === null) {
-        return '';
-    }
-
-    return trim((string) $value, " \t\n\r\0\x0B\"'");
-}
-
-function clean_onesignal_api_key_value($apiKey)
-{
-    $apiKey = trim((string) $apiKey, " \t\n\r\0\x0B\"'");
-    $apiKey = preg_replace('/^Authorization:\s*/i', '', $apiKey);
-    $apiKey = preg_replace('/^(Key|Basic)\s+/i', '', $apiKey);
-    return trim((string) $apiKey);
-}
-
-function build_onesignal_auth_header($apiKey)
-{
-    return 'Authorization: Key ' . clean_onesignal_api_key_value($apiKey);
-}
-
-function onesignal_value_looks_like_uuid($value)
-{
-    return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', trim((string) $value));
-}
-
-load_onesignal_environment();
-
-function getOneSignalConfigurationError()
-{
-    $appId = trim((string) ONESIGNAL_APP_ID);
-    $apiKey = clean_onesignal_api_key_value(ONESIGNAL_API_KEY);
-
-    if ($appId === '') {
-        return 'Missing ONESIGNAL_APP_ID in .env.';
-    }
-
-    if ($apiKey === '') {
-        return 'Missing ONESIGNAL_API_KEY in .env. Use the OneSignal REST API Key, not the App ID.';
-    }
-
-    if (hash_equals($appId, $apiKey) || onesignal_value_looks_like_uuid($apiKey)) {
-        return 'ONESIGNAL_API_KEY looks like an App ID. Copy the REST API Key from OneSignal Settings > Keys & IDs.';
-    }
-
-    return '';
-}
-
 // ─── OneSignal Credentials ───────────────────────────────────────────────────
 if (!defined('ONESIGNAL_APP_ID')) {
-    define('ONESIGNAL_APP_ID', onesignal_env_value('ONESIGNAL_APP_ID'));
+    define('ONESIGNAL_APP_ID', $_ENV['ONESIGNAL_APP_ID'] ?? '');
 }
 if (!defined('ONESIGNAL_API_KEY')) {
-    define('ONESIGNAL_API_KEY', onesignal_env_value('ONESIGNAL_API_KEY'));
+    define('ONESIGNAL_API_KEY', $_ENV['ONESIGNAL_API_KEY'] ?? '');
 }
 if (!defined('ONESIGNAL_ANDROID_SOUND')) {
     define('ONESIGNAL_ANDROID_SOUND', 'notification_sound');
@@ -111,29 +33,19 @@ function ensure_absolute_url($url)
 }
 
 /**
- * Send a push notification via OneSignal API
+ * Send a push notification via OneSignal API v1
  * 
  * @param array $player_ids Array of OneSignal Player IDs (subscription IDs)
  * @param string $title Notification heading
  * @param string $message Notification content
  * @param array $additional_data Custom data payload
  * @param string $url Target URL on click
- * @return string|false API response, or false when the request cannot be sent
+ * @return string API response
  */
 function sendOneSignalNotification($player_ids, $title, $message, $additional_data = [], $url = '')
 {
-    $player_ids = array_values(array_unique(array_filter(array_map(static function ($id) {
-        return trim((string) $id);
-    }, (array) $player_ids))));
-
     if (empty($player_ids))
         return false;
-
-    $configError = getOneSignalConfigurationError();
-    if ($configError !== '') {
-        error_log('OneSignal Error: ' . $configError);
-        return false;
-    }
 
     $content = array("en" => $message);
     $headings = array("en" => $title);
@@ -141,7 +53,6 @@ function sendOneSignalNotification($player_ids, $title, $message, $additional_da
     $fields = array(
         'app_id' => ONESIGNAL_APP_ID,
         'include_subscription_ids' => $player_ids,
-        'target_channel' => 'push',
         'headings' => $headings,
         'contents' => $content,
         'android_group' => 'cpl_updates',
@@ -192,44 +103,39 @@ function sendOneSignalNotification($player_ids, $title, $message, $additional_da
     }
 
     if (!empty($url)) {
-        $target_url = ensure_absolute_url($url);
-        $fields['url'] = $target_url;
-        $additional_data['target_url'] = $target_url;
+        $additional_data['target_url'] = $url;
     }
 
     if (!empty($additional_data)) {
         $fields['data'] = $additional_data;
     }
 
-    $fields_json = json_encode($fields, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $fields_json = json_encode($fields);
 
     // DEBUG: Log the payload to a file for investigation
     file_put_contents(__DIR__ . '/../onesignal_payload.log', date('[Y-m-d H:i:s] ') . $fields_json . PHP_EOL, FILE_APPEND);
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://api.onesignal.com/notifications");
+    curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'Content-Type: application/json; charset=utf-8',
-        build_onesignal_auth_header(ONESIGNAL_API_KEY)
+        'Authorization: Key ' . ONESIGNAL_API_KEY
     ));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_json);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
     $response = curl_exec($ch);
     $error = curl_error($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
     if ($error) {
         error_log("OneSignal Error: " . $error);
-        return false;
     }
     
     // DEBUG: Log the response
-    file_put_contents(__DIR__ . '/../onesignal_payload.log', date('[Y-m-d H:i:s] ') . "HTTP {$http_code} Response: " . $response . PHP_EOL, FILE_APPEND);
+    file_put_contents(__DIR__ . '/../onesignal_payload.log', date('[Y-m-d H:i:s] ') . "Response: " . $response . PHP_EOL, FILE_APPEND);
 
     return $response;
 }
