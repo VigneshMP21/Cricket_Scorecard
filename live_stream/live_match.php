@@ -202,7 +202,10 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
     <!-- Ball Run Popup -->
     <div id="runPopup" class="run-popup-overlay">
         <div class="run-ring" id="runRing"></div>
-        <div id="runNumber" class="run-number"></div>
+        <div class="run-popup-core">
+            <div id="runNumber" class="run-number"></div>
+            <div id="runCaption" class="run-caption"></div>
+        </div>
     </div>
 
     <!-- Super Over Intro Overlay -->
@@ -2231,6 +2234,18 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             return type ? `${type} b. ${bowlerName}` : `b. ${bowlerName}`;
         }
 
+        function formatBallCommentary(ball) {
+            const commentary = String(ball.commentary || '').trim();
+
+            if (!ball.wicket_type) {
+                return escapeHtml(commentary);
+            }
+
+            const wicketLabel = `<span class="commentary-wicket-label">OUT! (${escapeHtml(ball.wicket_type)})</span>`;
+            const wicketText = commentary || formatWicketDismissal(ball);
+            return `${wicketLabel}${wicketText ? ` <span class="commentary-wicket-text">${escapeHtml(wicketText)}</span>` : ''}`;
+        }
+
         // Add this new function for full commentary
         function renderFullCommentary(data) {
             const feed = document.getElementById('fullCommentaryFeed');
@@ -2260,7 +2275,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         <div style="flex:1;">
                             <span style="font-weight:bold; color:var(--text-secondary); margin-right:10px;">${ball.over_number}.${ball.ball_number}</span>
                             <strong>${ball.bowler_name} to ${ball.batter_name},</strong> 
-                            ${ball.wicket_type ? `<span style="color:var(--danger); font-weight:bold;">OUT! (${ball.wicket_type})</span>` : ball.commentary}
+                            ${formatBallCommentary(ball)}
                         </div>
                     </div>
                 `;
@@ -2796,7 +2811,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     const el = document.getElementById(id);
                     if (el) {
                         el.style.display = 'none';
-                        el.classList.remove('show', 'run-popup-active');
+                        el.classList.remove('show', 'run-popup-active', 'run-boundary-4', 'run-boundary-6', 'run-regular', 'run-regular-0', 'run-regular-1', 'run-regular-2', 'run-regular-3');
                     }
                 });
 
@@ -3106,7 +3121,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         <div style="flex:1;">
                             <span style="font-weight:bold; color:var(--text-secondary); margin-right:10px;">${ball.over_number}.${ball.ball_number}</span>
                             <strong>${ball.bowler_name} to ${ball.batter_name},</strong> 
-                            ${ball.wicket_type ? `<span style="color:var(--danger); font-weight:bold;">OUT! (${ball.wicket_type})</span>` : ball.commentary}
+                            ${formatBallCommentary(ball)}
                         </div>
                     </div>
                 `;
@@ -3960,6 +3975,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             const popup = document.getElementById('runPopup');
             const numberEl = document.getElementById('runNumber');
             const ringEl = document.getElementById('runRing');
+            const captionEl = document.getElementById('runCaption');
 
             // Ensure display is flex (might have been 'none' from undo sync)
             popup.style.display = 'flex';
@@ -3968,9 +3984,10 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             closePlayerCard();
 
             // Reset classes for animation
-            popup.classList.remove('show', 'run-popup-active');
+            popup.classList.remove('show', 'run-popup-active', 'run-boundary-4', 'run-boundary-6', 'run-regular', 'run-regular-0', 'run-regular-1', 'run-regular-2', 'run-regular-3');
             numberEl.className = 'run-number';
             ringEl.className = 'run-ring';
+            if (captionEl) captionEl.textContent = '';
 
             // Force reflow to allow re-triggering animation
             void popup.offsetWidth;
@@ -4001,6 +4018,8 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 colorCls = '6'; // Purple
                 audioKey = 'batHit';
                 doConfetti = true;
+            } else if (nVal == 1 || nVal == 2 || nVal == 3) {
+                colorCls = String(nVal);
             } else if (nVal === 'W') {
                 colorCls = 'W';
                 audioKey = 'wicket';
@@ -4027,14 +4046,26 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             numberEl.classList.add('run-' + colorCls);
             ringEl.classList.add('run-' + colorCls);
 
-            // Handle run-6 purple explicitly
+            const regularRunCaptions = {
+                '0': 'DOT BALL',
+                '1': 'SINGLE',
+                '2': 'TWO RUNS',
+                '3': 'THREE RUNS'
+            };
+            const regularRunKey = String(nVal);
+
             if (nVal == 6) {
-                numberEl.style.color = '#9B59B6';
-                ringEl.style.borderColor = 'rgba(155, 89, 182, 0.5)';
-            } else {
-                numberEl.style.color = '';
-                ringEl.style.borderColor = '';
+                popup.classList.add('run-boundary-6');
+                if (captionEl) captionEl.textContent = 'SIX!';
+            } else if (nVal == 4) {
+                popup.classList.add('run-boundary-4');
+                if (captionEl) captionEl.textContent = 'FOUR!';
+            } else if (Object.prototype.hasOwnProperty.call(regularRunCaptions, regularRunKey)) {
+                popup.classList.add('run-regular', `run-regular-${regularRunKey}`);
+                if (captionEl) captionEl.textContent = regularRunCaptions[regularRunKey];
             }
+            numberEl.style.color = '';
+            ringEl.style.borderColor = '';
 
             popup.classList.add('show', 'run-popup-active');
 
@@ -4043,13 +4074,15 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             }
 
             if (doConfetti) {
-                createConfettiBlast();
+                createConfettiBlast('corners');
             }
 
+            const isRegularRun = Object.prototype.hasOwnProperty.call(regularRunCaptions, regularRunKey);
+            const popupDuration = nVal === 'W' ? 4000 : ((nVal == 4 || nVal == 6) ? 1800 : (isRegularRun ? 1350 : 1200));
             setTimeout(() => {
-                popup.classList.remove('show', 'run-popup-active');
+                popup.classList.remove('show', 'run-popup-active', 'run-boundary-4', 'run-boundary-6', 'run-regular', 'run-regular-0', 'run-regular-1', 'run-regular-2', 'run-regular-3');
                 if (done) done();
-            }, (nVal === 'W' ? 4000 : 1200));
+            }, popupDuration);
         }
 
         function showDuckOutPopup(batter, done = null, duration = 2000) {
@@ -4091,15 +4124,67 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             }, duration);
         }
 
-        function createConfettiBlast() {
+        function createConfettiBlast(mode = 'center') {
             const container = document.createElement('div');
-            container.className = 'paper-blast';
+            const isCornerBlast = mode === 'corners';
+            container.className = `paper-blast ${isCornerBlast ? 'paper-blast-corners' : 'paper-blast-center'}`;
             document.body.appendChild(container);
 
-            const colors = ['#f1c40f', '#e67e22', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+            const colors = [
+                '#facc15',
+                '#fb923c',
+                '#ef4444',
+                '#38bdf8',
+                '#22c55e',
+                '#a855f7',
+                '#f472b6',
+                '#ffffff'
+            ];
+
+            if (isCornerBlast) {
+                const corners = [
+                    { x: '0%', y: '0%', dx: 1, dy: 1 },
+                    { x: '100%', y: '0%', dx: -1, dy: 1 },
+                    { x: '0%', y: '100%', dx: 1, dy: -1 },
+                    { x: '100%', y: '100%', dx: -1, dy: -1 }
+                ];
+                const piecesPerCorner = 32;
+
+                corners.forEach(corner => {
+                    for (let i = 0; i < piecesPerCorner; i++) {
+                        const conf = document.createElement('div');
+                        conf.className = 'confetti confetti-corner';
+                        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        conf.style.setProperty('--start-x', corner.x);
+                        conf.style.setProperty('--start-y', corner.y);
+                        conf.style.setProperty('--paper-width', `${5 + Math.random() * 9}px`);
+                        conf.style.setProperty('--paper-height', `${8 + Math.random() * 14}px`);
+                        conf.style.setProperty('--paper-radius', `${Math.random() > 0.7 ? 999 : 2}px`);
+                        conf.style.setProperty('--paper-scale', `${0.75 + Math.random() * 0.8}`);
+
+                        const tx = corner.dx * (70 + Math.random() * 440);
+                        const ty = corner.dy * (70 + Math.random() * 380);
+                        const drift = (Math.random() - 0.5) * 120;
+                        const tr = (Math.random() * 960 - 480) + 'deg';
+                        const duration = (1.15 + Math.random() * 0.75).toFixed(2);
+                        const delay = (Math.random() * 0.16).toFixed(2);
+
+                        conf.style.setProperty('--tx', `${tx + drift}px`);
+                        conf.style.setProperty('--ty', `${ty}px`);
+                        conf.style.setProperty('--tr', tr);
+                        conf.style.animation = `cornerPaperBlast ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`;
+
+                        container.appendChild(conf);
+                    }
+                });
+
+                setTimeout(() => container.remove(), 2400);
+                return;
+            }
+
             for (let i = 0; i < 50; i++) {
                 const conf = document.createElement('div');
-                conf.className = 'confetti';
+                conf.className = 'confetti confetti-center';
                 conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
                 const tx = (Math.random() - 0.5) * 400 + 'px';
@@ -4109,7 +4194,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 conf.style.setProperty('--tx', tx);
                 conf.style.setProperty('--ty', ty);
                 conf.style.setProperty('--tr', tr);
-                conf.style.animation = `confettiBlast 1s ease - out forwards`;
+                conf.style.animation = 'confettiBlast 1s ease-out forwards';
 
                 container.appendChild(conf);
             }
