@@ -4761,6 +4761,7 @@ body {
   max-width: 100%;
   color: #111827;
   line-height: 1.15;
+  overflow-wrap: break-word;
 }
 .pm-winner-side {
   box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
@@ -4786,6 +4787,7 @@ body {
   line-height: 1.25;
   text-align: center;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 .pm-status {
   border-radius: 999px;
@@ -4814,28 +4816,60 @@ body {
   color: #374151;
 }
 @media (max-width: 480px) {
+  #previousMatchesOverlay {
+    align-items: center;
+    padding: 10px;
+  }
+  #previousMatchesOverlay .um-card {
+    width: min(100%, 390px);
+    max-height: calc(100vh - 20px);
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+  #previousMatchesOverlay .um-header {
+    margin-bottom: 12px;
+  }
+  #previousMatchesOverlay .um-header h2 {
+    font-size: 1.32rem;
+    letter-spacing: 1px;
+  }
+  #previousMatchesOverlay .um-list {
+    gap: 10px;
+    padding: 0 1px 3px;
+  }
   .um-match-row {
     grid-template-columns: 1fr 90px 1fr;
     padding: 10px 8px;
   }
   .pm-match-row {
-    grid-template-columns: minmax(0, 1fr) 120px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 112px minmax(0, 1fr);
     padding: 0;
+    border-radius: 10px;
   }
   .pm-team-side {
-    min-height: 104px;
-    padding: 10px 8px;
+    min-height: 108px;
+    padding: 9px 7px;
   }
   .pm-center {
-    min-height: 104px;
-    padding: 10px 8px;
+    min-height: 108px;
+    padding: 9px 8px;
   }
   .pm-result-text {
-    font-size: 0.72rem;
+    font-size: 0.66rem;
+    letter-spacing: 0;
+    line-height: 1.18;
   }
   .pm-team-side .um-team-logo {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 5px;
+  }
+  .pm-team-side .um-team-name {
+    font-size: 0.76rem;
+    line-height: 1.08;
+  }
+  .pm-team-side .um-team-code {
+    font-size: 0.68rem;
   }
   .um-team-logo {
     width: 35px;
@@ -4861,34 +4895,50 @@ body {
     font-size: 0.7rem;
   }
   .pm-status {
-    font-size: 0.6rem;
-    padding: 4px 6px;
+    font-size: 0.58rem;
+    margin-top: 4px;
+    padding: 4px 7px;
   }
   .um-header h2 {
     font-size: 1.4rem;
   }
 }
 @media (max-width: 400px) {
+  #previousMatchesOverlay {
+    padding: 8px;
+  }
+  #previousMatchesOverlay .um-card {
+    width: min(100%, 372px);
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+  #previousMatchesOverlay .um-header h2 {
+    font-size: 1.18rem;
+  }
+  #previousMatchesOverlay .um-list {
+    gap: 9px;
+  }
   .um-match-row {
     grid-template-columns: 1fr 70px 1fr;
     gap: 2px;
     padding: 8px 5px;
   }
   .pm-match-row {
-    grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 104px minmax(0, 1fr);
     gap: 0;
     padding: 0;
   }
   .pm-team-side {
-    min-height: 96px;
+    min-height: 102px;
     padding: 8px 6px;
   }
   .pm-center {
-    min-height: 96px;
+    min-height: 102px;
     padding: 8px 6px;
   }
   .pm-result-text {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
+    line-height: 1.14;
   }
   .um-team-name {
     font-size: 0.75rem;
@@ -4907,8 +4957,15 @@ body {
     width: 32px;
     height: 32px;
   }
+  .pm-team-side .um-team-name {
+    font-size: 0.7rem;
+  }
   .um-center.pm-center {
     padding: 8px 6px;
+  }
+  .pm-status {
+    font-size: 0.54rem;
+    padding: 4px 6px;
   }
   .um-vs-box {
     padding: 1px 6px;

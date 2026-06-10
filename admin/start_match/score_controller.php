@@ -734,7 +734,7 @@ require_once '../../includes/header.php';
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4 text-center">
-                <div class="d-grid gap-3">
+                <div class="overlay-options-grid">
                     <button class="btn overlay-btn py-3 fw-bold" onclick="triggerOverlay('partnership')">
                         <i class="fas fa-users me-2"></i> Partnership Display
                     </button>
@@ -2391,28 +2391,132 @@ require_once '../../includes/header.php';
 </script>
 
 <style>
+    #menuOptionsModal .modal-dialog {
+        max-width: 680px;
+    }
+
+    #menuOptionsModal .modal-content {
+        overflow: hidden;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.24);
+    }
+
+    .overlay-options-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .overlay-btn {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        align-items: center;
+        background: var(--overlay-gradient, linear-gradient(135deg, #2563eb 0%, #06b6d4 100%));
         border: none;
+        border-radius: 14px;
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.16);
         color: white !important;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        font-size: 0.82rem;
+        gap: 8px;
+        justify-content: center;
+        letter-spacing: 0.5px;
+        line-height: 1.15;
+        min-height: 64px;
+        overflow: hidden;
+        padding: 12px 10px !important;
+        position: relative;
+        text-align: center;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        white-space: normal;
+        width: 100%;
+    }
+
+    .overlay-btn::after {
+        background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.22) 48%, transparent 100%);
+        content: "";
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        transition: opacity 0.25s ease;
+    }
+
+    .overlay-btn:nth-child(1) {
+        --overlay-gradient: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+    }
+
+    .overlay-btn:nth-child(2) {
+        --overlay-gradient: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+    }
+
+    .overlay-btn:nth-child(3) {
+        --overlay-gradient: linear-gradient(135deg, #059669 0%, #84cc16 100%);
+    }
+
+    .overlay-btn:nth-child(4) {
+        --overlay-gradient: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+    }
+
+    .overlay-btn:nth-child(5) {
+        --overlay-gradient: linear-gradient(135deg, #dc2626 0%, #f97316 100%);
+    }
+
+    .overlay-btn:nth-child(6) {
+        --overlay-gradient: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    }
+
+    .overlay-btn:nth-child(7) {
+        --overlay-gradient: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+    }
+
+    .overlay-btn:nth-child(8) {
+        --overlay-gradient: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%);
+    }
+
+    .overlay-btn:nth-child(9) {
+        --overlay-gradient: linear-gradient(135deg, #be123c 0%, #fb7185 100%);
+    }
+
+    .overlay-btn:nth-child(10) {
+        --overlay-gradient: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+    }
+
+    .overlay-btn:nth-child(11) {
+        --overlay-gradient: linear-gradient(135deg, #9333ea 0%, #2563eb 100%);
+    }
+
+    .overlay-btn:nth-child(12) {
+        --overlay-gradient: linear-gradient(135deg, #475569 0%, #111827 100%);
     }
 
     .overlay-btn:hover {
+        background: var(--overlay-gradient, linear-gradient(135deg, #2563eb 0%, #06b6d4 100%));
+        filter: brightness(1.05);
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        box-shadow: 0 14px 24px rgba(15, 23, 42, 0.22);
+    }
+
+    .overlay-btn:hover::after {
+        opacity: 1;
     }
 
     .overlay-btn:active {
         transform: translateY(0);
     }
 
+    .overlay-btn:disabled,
+    .overlay-btn.disabled {
+        cursor: not-allowed;
+        filter: grayscale(0.2);
+        opacity: 0.55;
+        transform: none;
+    }
+
     .overlay-btn i {
+        flex-shrink: 0;
         font-size: 1rem;
+        margin-right: 0 !important;
+        position: relative;
+        z-index: 1;
     }
 
     .commentary-control-card {
@@ -2549,13 +2653,28 @@ require_once '../../includes/header.php';
     }
 
     @media (max-width: 480px) {
+        #menuOptionsModal .modal-dialog {
+            margin: 0.75rem;
+        }
+
+        #menuOptionsModal .modal-body {
+            padding: 1rem !important;
+        }
+
+        .overlay-options-grid {
+            gap: 9px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .overlay-btn {
-            font-size: 0.85rem !important;
-            padding: 10px 5px !important;
+            border-radius: 12px;
+            font-size: 0.72rem !important;
+            min-height: 58px;
+            padding: 10px 7px !important;
         }
 
         .overlay-btn i {
-            font-size: 0.9rem !important;
+            font-size: 0.86rem !important;
         }
 
         /* Global Scale Reduction */
