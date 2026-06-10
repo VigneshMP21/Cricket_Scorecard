@@ -395,11 +395,13 @@ try {
     $stmt = $pdo->prepare("
         SELECT b.*, u1.name as batter_name, u1.profile_image as batter_image, 
                u2.name as bowler_name, u2.profile_image as bowler_image,
-               u3.name as wicket_player_name, u3.profile_image as wicket_player_image
+               u3.name as wicket_player_name, u3.profile_image as wicket_player_image,
+               u4.name as fielder_name
         FROM ball_by_ball b
         LEFT JOIN users u1 ON b.batsman_id = u1.id
         LEFT JOIN users u2 ON b.bowler_id = u2.id
         LEFT JOIN users u3 ON b.wicket_player_id = u3.id
+        LEFT JOIN users u4 ON b.fielder_id = u4.id
         WHERE b.match_id = ?
         ORDER BY b.inning_number DESC, b.id DESC
     ");
@@ -419,11 +421,13 @@ try {
         $stmt = $pdo->prepare("
             SELECT b.*, u1.name as batter_name, u1.profile_image as batter_image, 
                    u2.name as bowler_name, u2.profile_image as bowler_image,
-                   u3.name as wicket_player_name, u3.profile_image as wicket_player_image
+                   u3.name as wicket_player_name, u3.profile_image as wicket_player_image,
+                   u4.name as fielder_name
             FROM ball_by_ball b
             LEFT JOIN users u1 ON b.batsman_id = u1.id
             LEFT JOIN users u2 ON b.bowler_id = u2.id
             LEFT JOIN users u3 ON b.wicket_player_id = u3.id
+            LEFT JOIN users u4 ON b.fielder_id = u4.id
             WHERE b.match_id = ? AND b.inning_number = ? 
             ORDER BY b.id DESC LIMIT 20
         ");

@@ -600,26 +600,26 @@ require_once '../../includes/header.php';
             <div class="modal-body p-4">
                 <div class="small text-muted fw-bold text-uppercase mb-2" id="extraRunsLabel">Runs</div>
                 <div class="row g-2 mb-3">
-                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(0)">0</button></div>
-                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(1)">1</button></div>
-                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(2)">2</button></div>
-                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(3)">3</button></div>
-                    <div class="col-4"><button class="btn btn-info text-white fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-info text-white fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(4)">4</button></div>
-                    <div class="col-4"><button class="btn btn-success text-white fw-bold w-100 py-3 fs-4"
+                    <div class="col-4"><button class="btn btn-success text-white fw-bold w-100 py-3 fs-4 scoring-btn"
                             onclick="scoreExtraRuns(6)">6</button></div>
                 </div>
                 <div class="row g-2">
                     <div class="col-6">
-                        <button class="btn btn-outline-warning text-dark fw-bold w-100 py-3" type="button"
+                        <button class="btn btn-outline-warning text-dark fw-bold w-100 py-3 scoring-btn" type="button"
                             id="extraSwitchBtn" onclick="switchExtraType()">WD</button>
                     </div>
                     <div class="col-6">
-                        <button class="btn btn-outline-danger fw-bold w-100 py-3" type="button"
+                        <button class="btn btn-outline-danger fw-bold w-100 py-3 scoring-btn" type="button"
                             onclick="openExtraWicketModal()">
                             <i class="fas fa-skull-crossbones me-1"></i>Wicket
                         </button>
@@ -2115,7 +2115,7 @@ require_once '../../includes/header.php';
         document.getElementById('extraSwitchBtn').innerText = switchLabel;
         document.getElementById('extraSwitchBtn').dataset.extraType = switchType;
 
-        new bootstrap.Modal(document.getElementById('extraModal')).show();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('extraModal')).show();
     }
 
     function switchExtraType() {
@@ -2147,7 +2147,7 @@ require_once '../../includes/header.php';
         pendingWicketPlayerId = null;
         pendingRunOutRuns = 0;
         resetPendingExtra();
-        new bootstrap.Modal(document.getElementById('wicketModal')).show();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('wicketModal')).show();
     }
 
     function openExtraWicketModal() {
@@ -2158,7 +2158,7 @@ require_once '../../includes/header.php';
 
         const extraModal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
         if (extraModal) extraModal.hide();
-        new bootstrap.Modal(document.getElementById('wicketModal')).show();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('wicketModal')).show();
     }
 
     // Wicket Handling

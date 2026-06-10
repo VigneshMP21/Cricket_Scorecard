@@ -306,13 +306,13 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             <div
                 style="font-size: 5rem; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.4);">
                 OUT!</div>
-            <div id="wicketPlayerImgContainer" style="margin-bottom: 20px;">
+            <div id="wicketPlayerImgContainer" style="margin-bottom: 18px;">
                 <img id="wicketPlayerImg" src="../assets/images/default-player.png"
-                    style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #fff; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    style="width: 200px; height: 200px; border-radius: 12px; border: 5px solid #fff; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
             </div>
             <div id="wicketPlayerName" class="duck-player-name"
-                style="color: #fff; font-size: 2.5rem; margin-bottom: 10px;">Player Name</div>
-            <div id="wicketStats" style="font-size: 1.8rem; font-weight: 700; color: #ffeb3b;">0 (0)</div>
+                style="color: #fff; font-size: 2.2rem; margin-bottom: 8px;">Player Name - 0/0</div>
+            <div id="wicketStats" style="font-size: 1.35rem; font-weight: 800; color: #ffeb3b;">b. Bowler</div>
         </div>
     </div>
 
@@ -2190,6 +2190,25 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             return `ball-event ${display.cls}${display.compound ? ' compound-ball-event' : ''}`;
         }
 
+        function formatWicketDismissal(ball) {
+            const type = (ball.wicket_type || '').toLowerCase();
+            const bowlerName = ball.bowler_name || 'Bowler';
+            const fielderName = ball.fielder_name || '';
+
+            if (type === 'bowled') return `b. ${bowlerName}`;
+            if (type === 'caught') {
+                if (fielderName && ball.fielder_id && ball.bowler_id && ball.fielder_id == ball.bowler_id) {
+                    return `c & b. ${bowlerName}`;
+                }
+                return fielderName ? `c. ${fielderName} b. ${bowlerName}` : `c. b. ${bowlerName}`;
+            }
+            if (type === 'lbw') return `lbw b. ${bowlerName}`;
+            if (type === 'run out') return fielderName ? `run out (${fielderName})` : 'run out';
+            if (type === 'stumped') return fielderName ? `st. ${fielderName} b. ${bowlerName}` : `st. b. ${bowlerName}`;
+            if (type === 'hit wicket') return `hit wicket b. ${bowlerName}`;
+            return type ? `${type} b. ${bowlerName}` : `b. ${bowlerName}`;
+        }
+
         // Add this new function for full commentary
         function renderFullCommentary(data) {
             const feed = document.getElementById('fullCommentaryFeed');
@@ -2954,17 +2973,11 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 }
 
                 // 2. Ball Item
-                let ballClass = 'bg-0';
-                let ballText = ball.runs_scored;
-                if (ball.wicket_type) { ballClass = 'bg-W'; ballText = 'W'; }
-                else if (ball.runs_scored == 4) { ballClass = 'bg-4'; ballText = '4'; }
-                else if (ball.runs_scored == 6) { ballClass = 'bg-6'; ballText = '6'; }
-                else if (ball.extra_type == 'wide' || (ball.extra_type && ball.extra_type.toLowerCase() == 'wide')) { ballClass = 'bg-WD'; ballText = 'WD'; }
-                else if (ball.extra_type == 'no ball' || (ball.extra_type && ball.extra_type.toLowerCase() == 'no ball')) { ballClass = 'bg-NB'; ballText = 'NB'; }
+                const display = getBallDisplay(ball);
 
                 const ballHtml = `
                     <div class="commentary-item">
-                        <div class="ball-event ${ballClass}">${ballText}</div>
+                        <div class="${ballEventClass(display)}">${display.text}</div>
                         <div style="flex:1;">
                             <span style="font-weight:bold; color:var(--text-secondary); margin-right:10px;">${ball.over_number}.${ball.ball_number}</span>
                             <strong>${ball.bowler_name} to ${ball.batter_name},</strong> 
@@ -2988,6 +3001,9 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     const outPlayerId = ball.wicket_player_id || ball.batsman_id;
                     let batterName = ball.wicket_player_name || ball.batter_name;
                     let batterImg = ball.wicket_player_image || ball.batter_image || '';
+                    let batterRuns = '0';
+                    let batterBalls = '0';
+                    const dismissalText = formatWicketDismissal(ball);
 
                     if (sc) {
                         const outBatter = sc.batting.find(p => p.player_id == outPlayerId);
@@ -2995,22 +3011,21 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                             if (parseInt(outBatter.runs_scored) === 0) isDuck = true;
                             batterName = outBatter.name;
                             batterImg = outBatter.profile_image || batterImg;
+                            batterRuns = outBatter.runs_scored;
+                            batterBalls = outBatter.balls_faced;
                         }
                     }
 
                     if (isDuck) {
                         overlayManager.add('wicket', ball.id, 1, (done) => {
-                            showWicketPopup(batterName, batterImg, '0', '0', done, 2000, false);
+                            showWicketPopup(batterName, batterImg, batterRuns, batterBalls, dismissalText, done, 2000, false);
                         });
                         overlayManager.add('duck', ball.id, 1, (done) => {
-                            showDuckOutPopup({ name: batterName, balls_faced: 0 }, done, 2000);
+                            showDuckOutPopup({ name: batterName, balls_faced: batterBalls }, done, 2000);
                         });
                     } else {
                         // Normal Wicket: 4s, Wicket Audio
                         // Fetch stats from scorecard
-                        let batterRuns = '0';
-                        let batterBalls = '0';
-
                         if (sc) {
                             const outBatter = sc.batting.find(p => p.player_id == outPlayerId);
                             if (outBatter) {
@@ -3021,13 +3036,14 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         }
 
                         overlayManager.add('wicket', ball.id, 1, (done) => {
-                            showWicketPopup(batterName, batterImg, batterRuns, batterBalls, done, 4000, true);
+                            showWicketPopup(batterName, batterImg, batterRuns, batterBalls, dismissalText, done, 4000, true);
                         });
                     }
 
                 } else {
-                    if (ball.extra_type && ball.extra_type.toLowerCase() == 'wide') popupVal = 'WD';
-                    else if (ball.extra_type && ball.extra_type.toLowerCase() == 'no ball') popupVal = 'NB';
+                    if (ball.extra_type && ['wide', 'no ball'].includes(ball.extra_type.toLowerCase())) {
+                        popupVal = display.text;
+                    }
 
                     // Add to Overlay Queue: Run Popup (Priority 1)
                     overlayManager.add('run', ball.id, 1, (done) => {
@@ -3054,12 +3070,16 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                         overRuns += r;
                         if (b.wicket_type) overWickets++;
 
-                        let txt = b.runs_scored;
-                        if (b.wicket_type) txt = 'W';
-                        else if (b.extra_type == 'wide') txt = 'WD';
-                        else if (b.extra_type == 'no ball') txt = 'NB';
-                        ballDisplay.push(txt);
+                        ballDisplay.push(getBallDisplay(b).text);
                     });
+
+                    const summaryBallHtml = ballDisplay.map(t => {
+                        const isCompound = String(t).length > 2;
+                        const sizeStyle = isCompound
+                            ? 'min-width:42px; height:28px; padding:0 6px; border-radius:999px;'
+                            : 'width:28px; height:28px; border-radius:50%;';
+                        return `<div style="${sizeStyle} background:#333; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:bold; border:1px solid #444;">${t}</div>`;
+                    }).join('');
 
                     // Current Batters info
                     const p = data.current_players;
@@ -3096,7 +3116,7 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                             <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
                                 <span style="font-size:0.9rem; font-weight:700;">Balls:</span>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    ${ballDisplay.map(t => `<div style="width:28px; height:28px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:bold; border:1px solid #444;">${t}</div>`).join('')}
+                                    ${summaryBallHtml}
                                 </div>
                             </div>
                             ${battersInfo}
@@ -3838,14 +3858,16 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
 
             // Normalize val for comparison
             const nVal = (typeof val === 'string') ? val.toUpperCase() : val;
+            if (typeof nVal === 'string' && nVal.length > 2) {
+                numberEl.classList.add('run-number-compound');
+            }
 
-            if (nVal === 'WD' || nVal === 'NB') {
+            if (typeof nVal === 'string' && (nVal === 'WD' || nVal.startsWith('WD+'))) {
                 colorCls = 'W'; // Red style
-                if (nVal === 'WD') {
-                    audioKey = 'wide';
-                } else {
-                    audioKey = 'danger';
-                }
+                audioKey = 'wide';
+            } else if (typeof nVal === 'string' && (nVal === 'NB' || nVal.startsWith('NB+'))) {
+                colorCls = 'W'; // Red style
+                audioKey = 'danger';
             } else if (nVal == 4) {
                 colorCls = '4'; // Green
                 audioKey = 'batHit';
@@ -3921,10 +3943,10 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
             }, duration);
         }
 
-        function showWicketPopup(batterName, batterImg, runs, balls, done = null, duration = 4000, playSound = true) {
+        function showWicketPopup(batterName, batterImg, runs, balls, dismissalText = '', done = null, duration = 4000, playSound = true) {
             const popup = document.getElementById('wicketPopup');
-            document.getElementById('wicketPlayerName').innerText = batterName;
-            document.getElementById('wicketStats').innerText = `${runs} (${balls})`;
+            document.getElementById('wicketPlayerName').innerText = `${batterName} - ${runs}/${balls}`;
+            document.getElementById('wicketStats').innerText = dismissalText || 'out';
 
             const imgEl = document.getElementById('wicketPlayerImg');
             imgEl.src = batterImg ? `../uploads/users/${batterImg}` : '../assets/images/default-player.png';
@@ -4423,6 +4445,45 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
         }
     </script>
     <style>
+        .ball-event.compound-ball-event {
+            border-radius: 999px;
+            font-size: 0.65rem;
+            min-width: 46px;
+            padding: 0 7px;
+            width: auto;
+        }
+
+        .run-number.run-number-compound {
+            font-size: 6rem;
+            letter-spacing: 0;
+        }
+
+        #wicketPopup #wicketPlayerImg {
+            width: 200px !important;
+            height: 200px !important;
+            border-radius: 12px !important;
+        }
+
+        #wicketPlayerName,
+        #wicketStats {
+            max-width: min(90vw, 760px);
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 480px) {
+            .ball-event.compound-ball-event {
+                min-width: 40px;
+                padding: 0 5px;
+                font-size: 0.58rem;
+            }
+
+            .run-number.run-number-compound {
+                font-size: 4rem;
+            }
+        }
+
         /* Robust Overlay Safeguard */
         .overlay:not(.show),
         .player-card-overlay:not([style*="display: flex"]),
