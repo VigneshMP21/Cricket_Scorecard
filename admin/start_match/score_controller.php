@@ -416,16 +416,16 @@ require_once '../../includes/header.php';
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <button class="btn btn-warning w-100 py-2 fw-bold text-dark scoring-btn"
-                                        onclick="addExtra('wide')">WD</button>
+                                        onclick="openExtraOverlay('wide')">WD</button>
                                 </div>
                                 <div class="col-6">
                                     <button class="btn btn-warning w-100 py-2 fw-bold text-dark scoring-btn"
-                                        onclick="addExtra('no ball')">NB</button>
+                                        onclick="openExtraOverlay('no ball')">NB</button>
                                 </div>
                             </div>
 
                             <button class="btn btn-danger w-100 py-3 fw-bold fs-5 shadow rounded-pill scoring-btn"
-                                data-bs-toggle="modal" data-bs-target="#wicketModal">
+                                type="button" onclick="openWicketModal()">
                                 <i class="fas fa-skull-crossbones me-2"></i>WICKET
                             </button>
 
@@ -583,6 +583,47 @@ require_once '../../includes/header.php';
                             <span class="badge bg-light text-dark border"><?= $player['playing_role'] ?></span>
                         </button>
                     <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Extra Detail Modal -->
+<div class="modal fade" id="extraModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title fw-bold" id="extraModalTitle">Extra Runs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="small text-muted fw-bold text-uppercase mb-2" id="extraRunsLabel">Runs</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(0)">0</button></div>
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(1)">1</button></div>
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(2)">2</button></div>
+                    <div class="col-4"><button class="btn btn-light border fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(3)">3</button></div>
+                    <div class="col-4"><button class="btn btn-info text-white fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(4)">4</button></div>
+                    <div class="col-4"><button class="btn btn-success text-white fw-bold w-100 py-3 fs-4"
+                            onclick="scoreExtraRuns(6)">6</button></div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button class="btn btn-outline-warning text-dark fw-bold w-100 py-3" type="button"
+                            id="extraSwitchBtn" onclick="switchExtraType()">WD</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-danger fw-bold w-100 py-3" type="button"
+                            onclick="openExtraWicketModal()">
+                            <i class="fas fa-skull-crossbones me-1"></i>Wicket
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -763,6 +804,7 @@ require_once '../../includes/header.php';
     let pendingWicketType = null;
     let pendingWicketPlayerId = null;
     let pendingRunOutRuns = 0;
+    let pendingExtraType = null;
     let isEndingMatch = false;
 
     class LiveCommentaryBroadcaster {
@@ -1574,6 +1616,41 @@ require_once '../../includes/header.php';
             .catch(err => console.error("Sync Error:", err));
     }
 
+    function getBallDisplay(ball) {
+        const extraType = (ball.extra_type || '').toLowerCase();
+        const runs = parseInt(ball.runs_scored || 0);
+        const extraRuns = parseInt(ball.extra_runs || 0);
+        const hasWicket = !!ball.wicket_type;
+        let text = runs === 0 ? '•' : String(runs);
+        let bg = 'bg-light text-muted';
+
+        if (extraType === 'wide') {
+            const completedRuns = Math.max(0, extraRuns - 1);
+            text = completedRuns > 0 ? `WD+${completedRuns}` : 'WD';
+            if (hasWicket) text += '+W';
+            bg = 'bg-warning text-dark border-warning';
+        } else if (extraType === 'no ball') {
+            text = runs > 0 ? `NB+${runs}` : 'NB';
+            if (hasWicket) text += '+W';
+            bg = 'bg-warning text-dark border-warning';
+        } else if (hasWicket) {
+            text = 'W';
+            bg = 'bg-danger text-white border-danger';
+        } else if (runs === 4) {
+            text = '4';
+            bg = 'bg-primary text-white border-primary';
+        } else if (runs === 6) {
+            text = '6';
+            bg = 'bg-success text-white border-success';
+        }
+
+        return {
+            text,
+            bg,
+            compound: text.length > 2
+        };
+    }
+
     function updateUI(data) {
         const superOver2ndBtn = document.getElementById('superOver2ndBtn');
         const superOverBtn = document.getElementById('superOverBtn');
@@ -1711,25 +1788,11 @@ require_once '../../includes/header.php';
         let ballCount = 0;
         if (overBalls.length > 0) {
             overBalls.forEach(ball => {
-                let txt = ball.runs_scored;
-                if (ball.wicket_type) txt = 'W';
-                else if (ball.extra_type === 'wide') txt = 'WD';
-                else if (ball.extra_type === 'no ball') txt = 'NB';
-                else if (ball.runs_scored == 4) txt = '4';
-                else if (ball.runs_scored == 6) txt = '6';
-                else if (ball.runs_scored == 0) txt = '•';
-
-                let bg = 'bg-light text-muted';
-                if (txt === 'W') bg = 'bg-danger text-white border-danger';
-                else if (txt === '4') bg = 'bg-primary text-white border-primary';
-                else if (txt === '6') bg = 'bg-success text-white border-success';
-                else if (txt === 'WD' || txt === 'NB') bg = 'bg-warning text-dark border-warning';
+                const display = getBallDisplay(ball);
 
                 const el = document.createElement('div');
-                el.className = `rounded-circle border d-flex align-items-center justify-content-center fw-bold ${bg}`;
-                el.style.width = '35px';
-                el.style.height = '35px';
-                el.innerText = txt;
+                el.className = `current-over-ball border d-flex align-items-center justify-content-center fw-bold ${display.bg} ${display.compound ? 'current-over-ball-compound' : ''}`;
+                el.innerText = display.text;
                 bubbles.appendChild(el);
 
                 if (ball.extra_type !== 'wide' && ball.extra_type !== 'no ball') {
@@ -1741,9 +1804,7 @@ require_once '../../includes/header.php';
         // Fill remaining slots up to 6 legal balls
         for (let i = ballCount; i < 6; i++) {
             const el = document.createElement('div');
-            el.className = "rounded-circle bg-light border d-flex align-items-center justify-content-center text-muted";
-            el.style.width = '35px';
-            el.style.height = '35px';
+            el.className = "current-over-ball bg-light border d-flex align-items-center justify-content-center text-muted";
             el.innerText = '-';
             bubbles.appendChild(el);
         }
@@ -2028,14 +2089,76 @@ require_once '../../includes/header.php';
         sendRequest(formData);
     }
 
-    function addExtra(type) {
+    function shortExtraLabel(type) {
+        return type === 'wide' ? 'WD' : 'NB';
+    }
+
+    function normalizeExtraType(type) {
+        return type === 'wide' ? 'wide' : 'no ball';
+    }
+
+    function resetPendingExtra() {
+        pendingExtraType = null;
+    }
+
+    function openExtraOverlay(type) {
+        if (!validatePlayers()) return;
+        pendingExtraType = normalizeExtraType(type);
+        pendingRunOutRuns = 0;
+
+        const currentLabel = shortExtraLabel(pendingExtraType);
+        const switchType = pendingExtraType === 'wide' ? 'no ball' : 'wide';
+        const switchLabel = shortExtraLabel(switchType);
+
+        document.getElementById('extraModalTitle').innerText = `${currentLabel} Details`;
+        document.getElementById('extraRunsLabel').innerText = pendingExtraType === 'wide' ? 'Runs completed' : 'Batter runs';
+        document.getElementById('extraSwitchBtn').innerText = switchLabel;
+        document.getElementById('extraSwitchBtn').dataset.extraType = switchType;
+
+        new bootstrap.Modal(document.getElementById('extraModal')).show();
+    }
+
+    function switchExtraType() {
+        const switchBtn = document.getElementById('extraSwitchBtn');
+        openExtraOverlay(switchBtn.dataset.extraType || 'wide');
+    }
+
+    function scoreExtraRuns(runs) {
+        if (!pendingExtraType) return;
+        addExtra(pendingExtraType, runs);
+    }
+
+    function addExtra(type, runs = 0) {
         if (!validatePlayers()) return;
         const formData = new FormData();
         formData.append('action', 'score_update');
-        formData.append('runs', 0);
+        formData.append('runs', runs);
         formData.append('is_wicket', 'false');
         formData.append('extra_type', type);
-        sendRequest(formData);
+        sendRequest(formData, () => {
+            closeModals();
+            resetPendingExtra();
+        });
+    }
+
+    function openWicketModal() {
+        if (!validatePlayers()) return;
+        pendingWicketType = null;
+        pendingWicketPlayerId = null;
+        pendingRunOutRuns = 0;
+        resetPendingExtra();
+        new bootstrap.Modal(document.getElementById('wicketModal')).show();
+    }
+
+    function openExtraWicketModal() {
+        if (!validatePlayers() || !pendingExtraType) return;
+        pendingWicketType = null;
+        pendingWicketPlayerId = null;
+        pendingRunOutRuns = 0;
+
+        const extraModal = bootstrap.Modal.getInstance(document.getElementById('extraModal'));
+        if (extraModal) extraModal.hide();
+        new bootstrap.Modal(document.getElementById('wicketModal')).show();
     }
 
     // Wicket Handling
@@ -2098,6 +2221,7 @@ require_once '../../includes/header.php';
         formData.append('runs', pendingRunOutRuns); // Allocation of runs for run-out
         formData.append('is_wicket', 'true');
         formData.append('wicket_type', type);
+        if (pendingExtraType) formData.append('extra_type', pendingExtraType);
         if (fielderId) formData.append('fielder_id', fielderId);
         if (wicketPlayerId) formData.append('wicket_player_id', wicketPlayerId);
 
@@ -2106,6 +2230,7 @@ require_once '../../includes/header.php';
             pendingWicketType = null;
             pendingWicketPlayerId = null;
             pendingRunOutRuns = 0;
+            resetPendingExtra();
         });
     }
 
@@ -2387,6 +2512,23 @@ require_once '../../includes/header.php';
         color: #991b1b;
     }
 
+    .current-over-ball {
+        border-radius: 50%;
+        font-size: 0.8rem;
+        height: 35px;
+        line-height: 1;
+        min-width: 35px;
+        width: 35px;
+    }
+
+    .current-over-ball-compound {
+        border-radius: 999px;
+        font-size: 0.68rem;
+        min-width: 50px;
+        padding: 0 7px;
+        width: auto;
+    }
+
     @keyframes commentaryPulse {
         0% {
             box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
@@ -2503,6 +2645,20 @@ require_once '../../includes/header.php';
             width: 25px !important;
             height: 25px !important;
             font-size: 0.65rem !important;
+        }
+
+        .current-over-ball {
+            height: 25px;
+            min-width: 25px;
+            width: 25px;
+            font-size: 0.65rem;
+        }
+
+        .current-over-ball-compound {
+            min-width: 42px;
+            padding: 0 5px;
+            width: auto;
+            font-size: 0.58rem;
         }
 
         /* 4. Controls - 60% Size Reduction Concept */

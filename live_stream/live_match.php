@@ -2151,6 +2151,45 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                 });
         }
 
+        function getBallDisplay(ball) {
+            const extraType = (ball.extra_type || '').toLowerCase();
+            const runs = parseInt(ball.runs_scored || 0);
+            const extraRuns = parseInt(ball.extra_runs || 0);
+            const hasWicket = !!ball.wicket_type;
+            let text = runs === 0 ? '•' : String(runs);
+            let cls = 'bg-0';
+
+            if (extraType === 'wide') {
+                const completedRuns = Math.max(0, extraRuns - 1);
+                text = completedRuns > 0 ? `WD+${completedRuns}` : 'WD';
+                if (hasWicket) text += '+W';
+                cls = 'bg-WD';
+            } else if (extraType === 'no ball') {
+                text = runs > 0 ? `NB+${runs}` : 'NB';
+                if (hasWicket) text += '+W';
+                cls = 'bg-NB';
+            } else if (hasWicket) {
+                text = 'W';
+                cls = 'bg-W';
+            } else if (runs === 4) {
+                text = '4';
+                cls = 'bg-4';
+            } else if (runs === 6) {
+                text = '6';
+                cls = 'bg-6';
+            }
+
+            return {
+                text,
+                cls,
+                compound: text.length > 2
+            };
+        }
+
+        function ballEventClass(display) {
+            return `ball-event ${display.cls}${display.compound ? ' compound-ball-event' : ''}`;
+        }
+
         // Add this new function for full commentary
         function renderFullCommentary(data) {
             const feed = document.getElementById('fullCommentaryFeed');
@@ -2172,17 +2211,11 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     html += `<div class="inning-divider">${innLabel}</div>`;
                 }
 
-                let ballClass = 'bg-0';
-                let ballText = ball.runs_scored;
-                if (ball.wicket_type) { ballClass = 'bg-W'; ballText = 'W'; }
-                else if (ball.runs_scored == 4) { ballClass = 'bg-4'; ballText = '4'; }
-                else if (ball.runs_scored == 6) { ballClass = 'bg-6'; ballText = '6'; }
-                else if (ball.extra_type == 'wide' || (ball.extra_type && ball.extra_type.toLowerCase() == 'wide')) { ballClass = 'bg-WD'; ballText = 'WD'; }
-                else if (ball.extra_type == 'no ball' || (ball.extra_type && ball.extra_type.toLowerCase() == 'no ball')) { ballClass = 'bg-NB'; ballText = 'NB'; }
+                const display = getBallDisplay(ball);
 
                 html += `
                     <div class="commentary-item">
-                        <div class="ball-event ${ballClass}">${ballText}</div>
+                        <div class="${ballEventClass(display)}">${display.text}</div>
                         <div style="flex:1;">
                             <span style="font-weight:bold; color:var(--text-secondary); margin-right:10px;">${ball.over_number}.${ball.ball_number}</span>
                             <strong>${ball.bowler_name} to ${ball.batter_name},</strong> 
@@ -2865,15 +2898,8 @@ if (!isset($_COOKIE['cpt_viewer_id'])) {
                     // The safest bet is: strictly current bowler ID
                     if (currentBowlerId && b.bowler_id != currentBowlerId) return;
 
-                    let cls = 'bg-0';
-                    let txt = b.runs_scored;
-                    if (b.wicket_type) { cls = 'bg-W'; txt = 'W'; }
-                    else if (b.runs_scored == 4) { cls = 'bg-4'; txt = '4'; }
-                    else if (b.runs_scored == 6) { cls = 'bg-6'; txt = '6'; }
-                    else if (b.extra_type == 'wide' || (b.extra_type && b.extra_type.toLowerCase() == 'wide')) { cls = 'bg-WD'; txt = 'WD'; }
-                    else if (b.extra_type == 'no ball' || (b.extra_type && b.extra_type.toLowerCase() == 'no ball')) { cls = 'bg-NB'; txt = 'NB'; }
-
-                    bubbles.innerHTML += `<div class="ball-event ${cls}">${txt}</div>`;
+                    const display = getBallDisplay(b);
+                    bubbles.innerHTML += `<div class="${ballEventClass(display)}">${display.text}</div>`;
                 });
             }
 
