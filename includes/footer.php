@@ -94,7 +94,7 @@
 
         <div class="footer-bottom">
             <p class="mb-0">&copy; <?php echo date('Y'); ?> CPT LEAGUE. Made with <i class="fas fa-heart"></i> for
-                cricket lovers.</p>
+                cricket lovers. <a id="privacy-link" href="/CPT_LEAGUE/privacy-policy.php" aria-label="Privacy Policy">Privacy Policy</a></p>
         </div>
     </div>
 </footer>
@@ -236,6 +236,27 @@
                 }, 1000);
             }
         }
+    });
+</script>
+<script>
+    // Ensure footer privacy link works reliably on mobile (touchstart/touchend fallback)
+    document.addEventListener('DOMContentLoaded', function () {
+        var pl = document.getElementById('privacy-link');
+        if (!pl) return;
+        pl.style.position = 'relative';
+        pl.style.zIndex = '9999';
+        function navigateToPrivacy() {
+            window.location.href = '/CPT_LEAGUE/privacy-policy.php';
+        }
+        pl.addEventListener('click', function (e) {
+            // Some mobile environments may cancel clicks; force navigation
+            e.preventDefault();
+            navigateToPrivacy();
+        }, { passive: false });
+        pl.addEventListener('touchend', function (e) {
+            e.preventDefault();
+            navigateToPrivacy();
+        }, { passive: false });
     });
 </script>
 </body>
