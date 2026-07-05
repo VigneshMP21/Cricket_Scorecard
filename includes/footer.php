@@ -7,15 +7,6 @@
 <footer class="cricket-footer">
     <div class="container">
         <div class="row g-4 align-items-center">
-            <!-- Navigation Links -->
-            <div class="col-12 mb-3">
-                <h3 class="footer-heading mb-3">Quick Links</h3>
-                <div class="footer-nav d-flex flex-wrap gap-2">
-                    <a href="privacy-policy.php" class="footer-nav-link">
-                        <i class="fas fa-shield-alt me-1"></i>Privacy Policy
-                    </a>
-                </div>
-            </div>
 
             <!-- Left Side: Contact Info -->
             <div class="col-lg-6 mb-4 mb-lg-0">
