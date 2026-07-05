@@ -71,6 +71,13 @@ body {
   padding: 4rem 0;
 }
 
+/* Mobile responsive - reduce top padding */
+@media (max-width: 767.98px) {
+  .hero-overlay {
+    padding: 1rem 0;
+  }
+}
+
 .hero-content {
   animation: fadeInUp 1s ease-out;
 }

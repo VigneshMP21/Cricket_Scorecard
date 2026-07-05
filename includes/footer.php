@@ -239,24 +239,34 @@
     });
 </script>
 <script>
-    // Ensure footer privacy link works reliably on mobile (touchstart/touchend fallback)
+    // Ensure footer privacy link works reliably on mobile
     document.addEventListener('DOMContentLoaded', function () {
         var pl = document.getElementById('privacy-link');
         if (!pl) return;
+
+        // Make link more prominent on mobile with clear styling
+        pl.style.display = 'inline-block';
+        pl.style.padding = '8px 15px';
+        pl.style.marginTop = '8px';
+        pl.style.borderRadius = '4px';
+        pl.style.textDecoration = 'underline';
+        pl.style.cursor = 'pointer';
         pl.style.position = 'relative';
-        pl.style.zIndex = '9999';
-        function navigateToPrivacy() {
-            window.location.href = '/CPT_LEAGUE/privacy-policy.php';
-        }
+        pl.style.zIndex = '100';
+
+        // Ensure the link is always clickable
+        pl.style.pointerEvents = 'auto';
+
+        // Direct navigation using JavaScript to be extra safe
         pl.addEventListener('click', function (e) {
-            // Some mobile environments may cancel clicks; force navigation
             e.preventDefault();
-            navigateToPrivacy();
-        }, { passive: false });
+            window.location.href = '/CPT_LEAGUE/privacy-policy.php';
+        });
+
         pl.addEventListener('touchend', function (e) {
             e.preventDefault();
-            navigateToPrivacy();
-        }, { passive: false });
+            window.location.href = '/CPT_LEAGUE/privacy-policy.php';
+        });
     });
 </script>
 </body>
