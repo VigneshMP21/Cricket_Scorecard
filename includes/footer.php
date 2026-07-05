@@ -239,35 +239,31 @@
     });
 </script>
 <script>
-    // Ensure footer privacy link works reliably on mobile
-    document.addEventListener('DOMContentLoaded', function () {
-        var pl = document.getElementById('privacy-link');
-        if (!pl) return;
-
-        // Make link more prominent on mobile with clear styling
-        pl.style.display = 'inline-block';
-        pl.style.padding = '8px 15px';
-        pl.style.marginTop = '8px';
-        pl.style.borderRadius = '4px';
-        pl.style.textDecoration = 'underline';
-        pl.style.cursor = 'pointer';
-        pl.style.position = 'relative';
-        pl.style.zIndex = '100';
-
-        // Ensure the link is always clickable
-        pl.style.pointerEvents = 'auto';
-
-        // Direct navigation using JavaScript to be extra safe
-        pl.addEventListener('click', function (e) {
-            e.preventDefault();
-            window.location.href = 'privacy-policy.php';
-        });
-
-        pl.addEventListener('touchend', function (e) {
-            e.preventDefault();
-            window.location.href = 'privacy-policy.php';
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    var pl = document.getElementById('privacy-link');
+    if (!pl) return;
+    
+    // Ensure link works on all devices including mobile
+    pl.style.display = 'inline';
+    pl.style.position = 'relative';
+    pl.style.zIndex = '9999';
+    pl.style.cursor = 'pointer';
+    
+    // Remove any existing event listeners by cloning
+    var newPl = pl.cloneNode(true);
+    pl.parentNode.replaceChild(newPl, pl);
+    
+    // Add simple click handler
+    newPl.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = 'privacy-policy.php';
     });
+    
+    // For touch devices - ensure tap works
+    newPl.addEventListener('touchstart', function(e) {
+        // Let the click event handle it
+    }, {passive: true});
+});
 </script>
 </body>
 
