@@ -24,6 +24,10 @@ $password = '';
 $error = '';
 $success = '';
 
+if (isset($_GET['account_deleted']) && $_GET['account_deleted'] == 1) {
+    $success = "Your account has been successfully deleted. We're sorry to see you go.";
+}
+
 // Process login form
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = sanitize_input($_POST['email']);

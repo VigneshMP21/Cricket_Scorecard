@@ -630,6 +630,12 @@ if (session_status() === PHP_SESSION_NONE)
                                         </a>
                                     </li>
                                     <li>
+                                        <a class="dropdown-item text-danger" href="/CPT_LEAGUE/player/delete_account.php">
+                                            <div class="icon-box text-danger bg-danger-subtle"><i class="fas fa-trash-alt"></i></div>
+                                            <span>Delete Account</span>
+                                        </a>
+                                    </li>
+                                    <li>
                                         <hr class="dropdown-divider my-2">
                                     </li>
                                     <li>
