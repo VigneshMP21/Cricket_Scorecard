@@ -448,7 +448,7 @@ if (session_status() === PHP_SESSION_NONE)
                                             <div class="icon-box"><i class="fas fa-bell"></i></div>
                                             <span>Notification Manager</span>
                                         </a></li>
-                                    <li><a class="dropdown-item" href="/CPT_LEAGUE/admin/change_password.php">
+                                    <li><a class="dropdown-item" href="/CPT_LEAGUE/includes/privacy-policy.php"><div class="icon-box"><i class="fas fa-shield-alt"></i></div><span>Privacy Policy</span></a></li><li><a class="dropdown-item" href="/CPT_LEAGUE/admin/change_password.php">
                                             <div class="icon-box"><i class="fas fa-key"></i></div>
                                             <span>Change Password</span>
                                         </a></li>
@@ -624,7 +624,7 @@ if (session_status() === PHP_SESSION_NONE)
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/CPT_LEAGUE/player/change_password.php">
+                                        <a class="dropdown-item" href="/CPT_LEAGUE/includes/privacy-policy.php"><div class="icon-box"><i class="fas fa-shield-alt"></i></div><span>Privacy Policy</span></a></li><a class="dropdown-item" href="/CPT_LEAGUE/player/change_password.php">
                                             <div class="icon-box"><i class="fas fa-key"></i></div>
                                             <span>Change Password</span>
                                         </a>
