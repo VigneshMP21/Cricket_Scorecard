@@ -7,6 +7,15 @@
 <footer class="cricket-footer">
     <div class="container">
         <div class="row g-4 align-items-center">
+            <!-- Navigation Links -->
+            <div class="col-12 mb-3">
+                <h3 class="footer-heading mb-3">Quick Links</h3>
+                <div class="footer-nav d-flex flex-wrap gap-2">
+                    <a href="privacy-policy.php" class="footer-nav-link">
+                        <i class="fas fa-shield-alt me-1"></i>Privacy Policy
+                    </a>
+                </div>
+            </div>
 
             <!-- Left Side: Contact Info -->
             <div class="col-lg-6 mb-4 mb-lg-0">
@@ -94,7 +103,7 @@
 
         <div class="footer-bottom">
             <p class="mb-0">&copy; <?php echo date('Y'); ?> CPT LEAGUE. Made with <i class="fas fa-heart"></i> for
-                cricket lovers. <a id="privacy-link" href="privacy-policy.php" aria-label="Privacy Policy">Privacy Policy</a></p>
+                cricket lovers.</p>
         </div>
     </div>
 </footer>
@@ -237,33 +246,6 @@
             }
         }
     });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var pl = document.getElementById('privacy-link');
-    if (!pl) return;
-    
-    // Ensure link works on all devices including mobile
-    pl.style.display = 'inline';
-    pl.style.position = 'relative';
-    pl.style.zIndex = '9999';
-    pl.style.cursor = 'pointer';
-    
-    // Remove any existing event listeners by cloning
-    var newPl = pl.cloneNode(true);
-    pl.parentNode.replaceChild(newPl, pl);
-    
-    // Add simple click handler
-    newPl.addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = 'privacy-policy.php';
-    });
-    
-    // For touch devices - ensure tap works
-    newPl.addEventListener('touchstart', function(e) {
-        // Let the click event handle it
-    }, {passive: true});
-});
 </script>
 </body>
 
